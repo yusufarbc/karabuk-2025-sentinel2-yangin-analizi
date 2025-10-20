@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_7f53ee2f296d9214c71d824a85c20204 {
+                #map_e6785e7eb935be4f249be4af26b75a96 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -54,14 +54,14 @@
 <body>
     
     
-            <div class="folium-map" id="map_7f53ee2f296d9214c71d824a85c20204" ></div>
+            <div class="folium-map" id="map_e6785e7eb935be4f249be4af26b75a96" ></div>
         
 </body>
 <script>
     
     
-            var map_7f53ee2f296d9214c71d824a85c20204 = L.map(
-                "map_7f53ee2f296d9214c71d824a85c20204",
+            var map_e6785e7eb935be4f249be4af26b75a96 = L.map(
+                "map_e6785e7eb935be4f249be4af26b75a96",
                 {
                     center: [41.089555901423566, 32.82999999999975],
                     crs: L.CRS.EPSG3857,
@@ -73,13 +73,13 @@
 
                 }
             );
-            L.control.scale().addTo(map_7f53ee2f296d9214c71d824a85c20204);
+            L.control.scale().addTo(map_e6785e7eb935be4f249be4af26b75a96);
 
             
 
         
     
-            var tile_layer_0a3a85f129557f38a019e21ea4532ed6 = L.tileLayer(
+            var tile_layer_00572960ee6bed1e44bb2ff3a6db61d9 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -96,11 +96,11 @@
             );
         
     
-            tile_layer_0a3a85f129557f38a019e21ea4532ed6.addTo(map_7f53ee2f296d9214c71d824a85c20204);
+            tile_layer_00572960ee6bed1e44bb2ff3a6db61d9.addTo(map_e6785e7eb935be4f249be4af26b75a96);
         
     
-            var tile_layer_d67271ebfa67b358003565245ff165c9 = L.tileLayer(
-                "https://earthengine.googleapis.com/v1/projects/karabukwildfire2025/maps/6c5fa446bea9e02eba3b55466a6d758b-79b15aacfaf2ce7309ae9fe5dd272a90/tiles/{z}/{x}/{y}",
+            var tile_layer_65cf3362fada0ccf94b522d3aeb37f54 = L.tileLayer(
+                "https://earthengine.googleapis.com/v1/projects/karabukwildfire2025/maps/b9ac07041bff5ee7449eaebb8f135fce-0ac93611dcb22080c962f031c62aa909/tiles/{z}/{x}/{y}",
                 {
   "minZoom": 0,
   "maxZoom": 18,
@@ -116,43 +116,43 @@
             );
         
     
-            tile_layer_d67271ebfa67b358003565245ff165c9.addTo(map_7f53ee2f296d9214c71d824a85c20204);
+            tile_layer_65cf3362fada0ccf94b522d3aeb37f54.addTo(map_e6785e7eb935be4f249be4af26b75a96);
         
     
-            var layer_control_40e185caa7907662aafb2c2d5cdb0985_layers = {
+            var layer_control_98aebd27d03d0b713681293cb2c605a3_layers = {
                 base_layers : {
-                    "openstreetmap" : tile_layer_0a3a85f129557f38a019e21ea4532ed6,
+                    "openstreetmap" : tile_layer_00572960ee6bed1e44bb2ff3a6db61d9,
                 },
                 overlays :  {
-                    "dNBR Severity 2025-07-10\u20132025-07-25\u21922025-07-26\u20132025-08-10" : tile_layer_d67271ebfa67b358003565245ff165c9,
+                    "dNBR Severity 2025-07-10-2025-07-25 vs 2025-07-26-2025-08-10" : tile_layer_65cf3362fada0ccf94b522d3aeb37f54,
                 },
             };
-            let layer_control_40e185caa7907662aafb2c2d5cdb0985 = L.control.layers(
-                layer_control_40e185caa7907662aafb2c2d5cdb0985_layers.base_layers,
-                layer_control_40e185caa7907662aafb2c2d5cdb0985_layers.overlays,
+            let layer_control_98aebd27d03d0b713681293cb2c605a3 = L.control.layers(
+                layer_control_98aebd27d03d0b713681293cb2c605a3_layers.base_layers,
+                layer_control_98aebd27d03d0b713681293cb2c605a3_layers.overlays,
                 {
   "position": "topright",
   "collapsed": true,
   "autoZIndex": true,
 }
-            ).addTo(map_7f53ee2f296d9214c71d824a85c20204);
+            ).addTo(map_e6785e7eb935be4f249be4af26b75a96);
 
         
     
-            var marker_e5b8132fea17da6b3efb9cc3eae6bf3d = L.marker(
+            var marker_cf34a29574c8a251b03e011a376997d0 = L.marker(
                 [0.0, 0.0],
                 {
 }
-            ).addTo(map_7f53ee2f296d9214c71d824a85c20204);
+            ).addTo(map_e6785e7eb935be4f249be4af26b75a96);
         
     
-            var div_icon_785bfa7b8d8b9b0f5601d5ed63c87e3a = L.divIcon({
-  "html": "\u003cdiv style=\"position: fixed; bottom: 25px; left: 10px; z-index: 9999;          background: white; padding: 10px; border: 2px solid #bbb;          font-size: 12px; line-height: 14px;\"\u003e\u003cb\u003edNBR Severity\u003c/b\u003e\u003cbr/\u003e\u003ci style=\"background:#1a9850;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eUnburned/Low\u003cbr/\u003e\u003ci style=\"background:#a6d96a;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eLow\u003cbr/\u003e\u003ci style=\"background:#fee08b;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eModerate-Low\u003cbr/\u003e\u003ci style=\"background:#f46d43;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eModerate-High\u003cbr/\u003e\u003ci style=\"background:#a50026;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eHigh\u003cbr/\u003e\u003c/div\u003e",
+            var div_icon_e7a593cdccd850caf1e1ccb8217f6ff9 = L.divIcon({
+  "html": "\u003cdiv style=\"position: fixed; bottom: 25px; left: 10px; z-index: 9999; background: white; padding: 10px; border: 2px solid #bbb; font-size: 12px; line-height: 14px;\"\u003e\u003cb\u003edNBR Severity\u003c/b\u003e\u003cbr/\u003e\u003ci style=\"background:#1a9850;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eUnburned/Low\u003cbr/\u003e\u003ci style=\"background:#a6d96a;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eLow\u003cbr/\u003e\u003ci style=\"background:#fee08b;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eModerate-Low\u003cbr/\u003e\u003ci style=\"background:#f46d43;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eModerate-High\u003cbr/\u003e\u003ci style=\"background:#a50026;width:12px;height:12px;display:inline-block;margin-right:6px;\"\u003e\u003c/i\u003eHigh\u003cbr/\u003e\u003c/div\u003e",
   "className": "empty",
 });
         
     
-                marker_e5b8132fea17da6b3efb9cc3eae6bf3d.setIcon(div_icon_785bfa7b8d8b9b0f5601d5ed63c87e3a);
+                marker_cf34a29574c8a251b03e011a376997d0.setIcon(div_icon_e7a593cdccd850caf1e1ccb8217f6ff9);
             
 </script>
 </html>

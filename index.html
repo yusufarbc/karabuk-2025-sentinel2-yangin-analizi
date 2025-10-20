@@ -3,132 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KarabukWildfire2025 - Analiz Çıktı Listesi</title>
+    <title>KarabükWildfire2025 — Analiz Çıktıları</title>
     <style>
+        :root {
+            --accent: #cc0000;
+            --primary: #0d6efd;
+            --bg: #f5f6fa;
+            --card: #ffffff;
+            --muted: #6b7280;
+            --ring: rgba(13,110,253,0.15);
+        }
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 40px;
-            background-color: #f4f4f9;
-            color: #333;
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: var(--bg);
+            color: #111827;
+            line-height: 1.55;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        header {
+            padding: 32px 20px 12px;
+            background: linear-gradient(180deg, #fff 0%, #fff 65%, rgba(255,255,255,0.8) 100%);
+            border-bottom: 1px solid #eef1f5;
         }
+        .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
         h1 {
-            color: #CC0000;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            letter-spacing: 0.2px;
         }
-        h2 {
-            margin-top: 30px;
-            color: #007bff;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+        .subtitle { color: var(--muted); margin: 0 0 8px 0; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .chip { font-size: 12px; color: #374151; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 6px 10px; border-radius: 999px; }
+
+        main { padding: 12px 20px 40px; }
+        section { margin: 22px 0 28px; }
+        .section-title { font-size: 18px; margin: 0 0 12px; color: #111827; }
+        .section-sub { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
         }
-        ul {
-            list-style: none;
-            padding: 0;
+        .card {
+            background: var(--card);
+            border: 1px solid #ebeef3;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
         }
-        li {
-            margin-bottom: 12px;
-            padding: 10px 15px;
-            background-color: #f9f9f9;
-            border-left: 5px solid #CC0000;
-            transition: background-color 0.3s;
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.06); border-color: #e2e8f0; }
+        .thumb {
+            aspect-ratio: 16/10;
+            background: #f0f2f6;
+            display: grid; place-items: center;
+            overflow: hidden;
+            border-bottom: 1px solid #f1f5f9;
         }
-        li:hover {
-            background-color: #ffebeb;
+        .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .thumb .placeholder { font-size: 12px; color: #9ca3af; }
+        .body { padding: 12px 12px 10px; }
+        .title { font-size: 15px; margin: 0 0 6px; font-weight: 600; }
+        .desc { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+        .actions { display: flex; gap: 8px; margin-top: auto; padding: 0 12px 12px; flex-wrap: wrap; }
+        .btn {
+            --c: var(--primary);
+            appearance: none; border: 1px solid var(--c); color: var(--c);
+            background: #fff; padding: 8px 10px; border-radius: 8px; font-size: 13px;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+            transition: background .15s ease, box-shadow .15s ease, border-color .15s ease, color .15s ease;
         }
-        a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-            display: block;
-        }
-        a:hover {
-            text-decoration: underline;
-            color: #0056b3;
-        }
-        .file-description {
-            display: block;
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 5px;
-        }
-        .csv-link a, .png-link a {
-            color: #28a745; /* Yeşil */
-        }
-        .png-link {
-            border-left: 5px solid #28a745;
-        }
+        .btn:hover { background: #f7f9ff; box-shadow: 0 0 0 4px var(--ring); }
+        .btn.secondary { --c: #374151; }
+        .badge { color: var(--accent); font-weight: 600; }
+
+        footer { color: var(--muted); font-size: 13px; padding: 28px 0 10px; border-top: 1px solid #eef1f5; }
+        .downloads { display: flex; gap: 10px; flex-wrap: wrap; }
+        .download { border: 1px dashed #d1d5db; padding: 10px 12px; border-radius: 8px; background: #fff; }
+        /* Intro (wide, non-card) */
+        .intro { margin: 8px 0 18px; }
+        .intro .lead { font-size: 15px; color: #374151; margin: 0 0 8px; }
+        .intro ul { margin: 0 0 0 18px; color: #374151; font-size: 13px; line-height: 1.55; }
+        @media (max-width: 560px) { h1 { font-size: 22px; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>KarabukWildfire2025 - Analiz Çıktıları</h1>
-        <p>Analiz hattı tarafından üretilen tüm haritalar, görüntüler ve istatistikler aşağıda listelenmiştir. İlgili dosyaya erişmek için linke tıklayınız.</p>
+    <header>
+        <div class="wrap">
+            <h1>KarabükWildfire2025 — Analiz Çıktıları</h1>
+            <p class="subtitle">Sentinel‑2 temelli NDVI/NBR türevleri, fark haritaları ve şiddet sınıflandırması.</p>
+            <div class="chips">
+                <span class="chip">Sentinel‑2 L2A</span>
+                <span class="chip">NDVI</span>
+                <span class="chip">NBR / dNBR</span>
+                <span class="chip">Öncesi / Sonrası</span>
+                <span class="chip">Karabük AOI</span>
+            </div>
+        </div>
+    </header>
 
-        <h2>📊 Temel Harita ve İstatistik Çıktıları (HTML/CSV)</h2>
-        <ul>
-            <li>
-                <a href="results/severity.html" target="_blank">severity.html</a>
-                <span class="file-description">Yanma Şiddeti Sınıflandırma Haritası (Nihai Sonuç).</span>
-            </li>
-            <li>
-                <a href="results/dNBR.html" target="_blank">dNBR.html</a>
-                <span class="file-description">Normalleştirilmiş Yanma Oranı Değişimi (dNBR) Haritası.</span>
-            </li>
-            <li>
-                <a href="results/dNDVI.html" target="_blank">dNDVI.html</a>
-                <span class="file-description">NDVI Değişimi (dNDVI) Haritası.</span>
-            </li>
-            <li>
-                <a href="results/pre_RGB_2025-07-10_2025-07-25.html" target="_blank">pre_RGB_2025-07-10_2025-07-25.html</a>
-                <span class="file-description">Yangın Öncesi (7/10 - 7/25) Sentinel-2 Gerçek Renkli Görüntü.</span>
-            </li>
-            <li>
-                <a href="results/post_RGB_2025-07-26_2025-08-10.html" target="_blank">post_RGB_2025-07-26_2025-08-10.html</a>
-                <span class="file-description">Yangın Sonrası (7/26 - 8/10) Sentinel-2 Gerçek Renkli Görüntü.</span>
-            </li>
+    <main>
+        <div class="wrap">
+            <section class="intro" aria-label="Proje özeti">
+                <p class="lead">
+                    Sentinel‑2 tabanlı NDVI/NBR fark analizleri ile yangın etkisi (yeşil örtü kaybı ve yanıklık şiddeti) haritalanmıştır.
+                    QA60+SCL+NDWI/MNDWI maskelemesi ve 100 m kıyı tamponu ile su/kıyı yalancı sinyalleri elenmiş; <code>NDVIpre&gt;0.25</code>
+                    koşulu ile analiz yanabilir örtüye odaklanmıştır.
+                </p>
+                <ul>
+                    <li><b>Yöntem:</b> Önce 1–10 Haz., sonra 20–30 Ağu.; dNDVI=post−pre, dNBR=pre−post; sınıflar 0–4 (USGS‑benzeri).</li>
+                    <li><b>Bulgular:</b> NDVI 0.451→0.431 (dNDVI≈−0.022); dNBR≈0.003; toplam yanmış ≈ 45,448.49 ha; şiddet çoğunlukla düşük.</li>
+                </ul>
+            </section>
+            <section>
+                <h2 class="section-title">Nasıl Okunur?</h2>
+                <p class="section-sub">Kartlar etkileşimli haritalara ve statik görsellere bağlanır.</p>
+                <ul>
+                    <li><strong>Şiddet (dNBR 0–4):</strong> 0 = yanıksız/çok düşük, 4 = yüksek. Renk skalası yeşilden kırmızıya artar.</li>
+                    <li><strong>dNBR:</strong> Önce − Sonra. Pozitif değer yanıklık artışıdır; yüksek tonlar daha güçlü etkiyi gösterir.</li>
+                    <li><strong>NDVI Öncesi/Sonrası:</strong> Yeşil örtünün yoğunluğunu gösterir (daha açık/yoğun tonlar ≈ daha yüksek NDVI).</li>
+                    <li><strong>RGB:</strong> Doğal renk karşılaştırması; genel bağlam ve görsel doğrulama için.</li>
+                </ul>
+            </section>
+            <section>
+                <h2 class="section-title">Önemli Haritalar</h2>
+                <p class="section-sub">Nihai şiddet ve fark haritaları. Kartlara tıklayarak etkileşimli haritayı açın.</p>
+                <div class="grid">
+                    <article class="card">
+                        <div class="thumb"><img src="results/severity.png" alt="Şiddet haritası"></div>
+                        <div class="body">
+                            <h3 class="title">dNBR Şiddeti (0–4)</h3>
+                            <p class="desc">Eşik tabanlı yanıklık şiddeti sınıfları.</p>
+                        </div>
+                        <div class="actions">
+                            <a class="btn" href="results/severity.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/severity.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
 
-            <li class="results/csv-link">
-                <a href="summary_stats.csv" target="_blank">summary_stats.csv</a>
-                <span class="file-description">Genel Yangın Şiddeti ve Alan Özet İstatistikleri (Hektar).</span>
-            </li>
-            <li class="results/csv-link">
-                <a href="severity_areas.csv" target="_blank">severity_areas.csv</a>
-                <span class="file-description">Şiddet sınıflarına (yanık, hafif, orta vb.) göre detaylı alan dökümü.</span>
-            </li>
-        </ul>
+                    <article class="card">
+                        <div class="thumb"><img src="results/dNBR.png" alt="dNBR haritası"></div>
+                        <div class="body">
+                            <h3 class="title">dNBR</h3>
+                            <p class="desc">Yanıklık duyarlı fark indeksi.</p>
+                        </div>
+                        <div class="actions">
+                            <a class="btn" href="results/dNBR.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/dNBR.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
 
-        <h2>🖼️ Tüm İndeks Haritaları ve PNG Çıktıları (Detay)</h2>
-        <ul>
-            <li><a href="results/post_NBR.html" target="_blank">post_NBR.html</a><span class="file-description">Yangın Sonrası NBR Haritası.</span></li>
-            <li><a href="results/post_NDVI.html" target="_blank">post_NDVI.html</a><span class="file-description">Yangın Sonrası NDVI Haritası.</span></li>
-            
-            <li><a href="results/pre_NBR.html" target="_blank">pre_NBR.html</a><span class="file-description">Yangın Öncesi NBR Haritası.</span></li>
-            <li><a href="results/pre_NDVI.html" target="_blank">pre_NDVI.html</a><span class="file-description">Yangın Öncesi NDVI Haritası.</span></li>
+                    <article class="card">
+                        <div class="thumb"><img src="results/dNDVI.png" alt="dNDVI haritası"></div>
+                        <div class="body">
+                            <h3 class="title">dNDVI</h3>
+                            <p class="desc">Vejetasyon değişimi (öncesi − sonrası).</p>
+                        </div>
+                        <div class="actions">
+                            <a class="btn" href="results/dNDVI.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/dNDVI.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
+                </div>
+            </section>
 
-            <li class="png-link"><a href="results/severity.png" target="_blank">severity.png</a><span class="file-description">Şiddet Haritası'nın Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/dNBR.png" target="_blank">dNBR.png</a><span class="file-description">dNBR Haritası'nın Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/dNDVI.png" target="_blank">dNDVI.png</a><span class="file-description">dNDVI Haritası'nın Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/post_RGB.png" target="_blank">post_RGB.png</a><span class="file-description">Yangın Sonrası RGB'nin Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/pre_RGB.png" target="_blank">pre_RGB.png</a><span class="file-description">Yangın Öncesi RGB'nin Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/post_NBR.png" target="_blank">post_NBR.png</a><span class="file-description">Yangın Sonrası NBR'nin Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/pre_NBR.png" target="_blank">pre_NBR.png</a><span class="file-description">Yangın Öncesi NBR'nin Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/post_NDVI.png" target="_blank">post_NDVI.png</a><span class="file-description">Yangın Sonrası NDVI'nin Statik Görüntüsü.</span></li>
-            <li class="png-link"><a href="results/pre_NDVI.png" target="_blank">pre_NDVI.png</a><span class="file-description">Yangın Öncesi NDVI'nin Statik Görüntüsü.</span></li>
-        </ul>
+            <section>
+                <h2 class="section-title">NDVI / NBR — Öncesi ve Sonrası</h2>
+                <p class="section-sub">Kompozit haritalar ve doğal renk (RGB) görselleri.</p>
+                <div class="grid">
+                    <article class="card">
+                        <div class="thumb"><img src="results/pre_NDVI.png" alt="Öncesi NDVI"></div>
+                        <div class="body"><h3 class="title">Öncesi NDVI</h3><p class="desc">Sentinel‑2 median kompozit.</p></div>
+                        <div class="actions">
+                            <a class="btn" href="results/pre_NDVI.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/pre_NDVI.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="thumb"><img src="results/post_NDVI.png" alt="Sonrası NDVI"></div>
+                        <div class="body"><h3 class="title">Sonrası NDVI</h3><p class="desc">Sentinel‑2 median kompozit.</p></div>
+                        <div class="actions">
+                            <a class="btn" href="results/post_NDVI.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/post_NDVI.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="thumb"><img src="results/pre_NBR.png" alt="Öncesi NBR"></div>
+                        <div class="body"><h3 class="title">Öncesi NBR</h3><p class="desc">Yanıklık duyarlı indeks.</p></div>
+                        <div class="actions">
+                            <a class="btn" href="results/pre_NBR.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/pre_NBR.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="thumb"><img src="results/post_NBR.png" alt="Sonrası NBR"></div>
+                        <div class="body"><h3 class="title">Sonrası NBR</h3><p class="desc">Yanıklık duyarlı indeks.</p></div>
+                        <div class="actions">
+                            <a class="btn" href="results/post_NBR.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/post_NBR.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="thumb"><img src="results/pre_RGB.png" alt="Öncesi RGB"></div>
+                        <div class="body"><h3 class="title">Öncesi RGB</h3><p class="desc">Doğal renk (B4,B3,B2).</p></div>
+                        <div class="actions">
+                            <a class="btn" href="results/pre_RGB_2025-07-10_2025-07-25.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/pre_RGB.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="thumb"><img src="results/post_RGB.png" alt="Sonrası RGB"></div>
+                        <div class="body"><h3 class="title">Sonrası RGB</h3><p class="desc">Doğal renk (B4,B3,B2).</p></div>
+                        <div class="actions">
+                            <a class="btn" href="results/post_RGB_2025-07-26_2025-08-10.html" target="_blank">Harita (HTML)</a>
+                            <a class="btn secondary" href="results/post_RGB.png" target="_blank">PNG</a>
+                        </div>
+                    </article>
+                </div>
+            </section>
 
-        <footer>
-            KarabukWildfire2025 Projesi Çıktıları. Tüm linkler, bu dizin içinde bulunan dosyalara yönlendirilmektedir.
-        </footer>
-    </div>
+            <section>
+                <h2 class="section-title">Veri İndirmeleri</h2>
+                <p class="section-sub">Özet istatistikler ve şiddet alan dökümü.</p>
+                <div class="downloads">
+                    <a class="download" href="results/summary_stats.csv" target="_blank">summary_stats.csv</a>
+                    <a class="download" href="results/severity_areas.csv" target="_blank">severity_areas.csv</a>
+                </div>
+            </section>
+
+            <footer>
+                KarabükWildfire2025 çıktı listesi — tüm bağlantılar bu depo içindeki <span class="badge">results/</span> klasörüne işaret eder.
+            </footer>
+        </div>
+    </main>
 </body>
 </html>

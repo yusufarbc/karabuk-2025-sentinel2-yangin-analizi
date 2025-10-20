@@ -1,90 +1,101 @@
-# KarabukWildfire2025: Orman Yangını Etkisi Analizi
+# KarabükWildfire2025: Orman Yangını Etkisi Analizi
 
-Sentinel-2 uydu görüntüleri kullanılarak 2025 Karabük yangınının etkilerini (yanma şiddeti, hasar) değerlendirmeye yönelik Google Earth Engine (GEE) tabanlı analiz projesi. Normalized Difference Vegetation Index (NDVI), Normalized Burn Ratio (NBR) ve bu indekslerin değişimleri (dNDVI, dNBR) hesaplanmıştır.
+Sentinel‑2 uydu görüntüleri kullanılarak 2025 Karabük yangınının etkilerini (yanma şiddeti, hasar) değerlendirmeye yönelik Google Earth Engine (GEE) tabanlı analiz projesi. NDVI, NBR ve fark indeksleri (dNDVI, dNBR) üretilir; dNBR eşikleriyle şiddet sınıflandırması yapılır.
 
-## 🔗 Canlı Demo ve Sonuçlar
+## Canlı Demo ve Sonuçlar
 
-Analiz çıktılarına ve interaktif haritalara aşağıdaki linkten ulaşabilirsiniz:
+Interaktif haritalar ve çıktı listesi:
 
-➡️ **[PROJE SONUÇLARI (GITHUB PAGES)](https://yusufarbc.github.io/KarabukWildfire2025/)**
-➡️ **[ANA GİTHUB DEPOSU](https://github.com/yusufarbc/KarabukWildfire2025)**
+➡️ [GitHub Pages — Proje Sonuçları](https://yusufarbc.github.io/KarabukWildfire2025/)
 
------
+Yerelde görüntüleme: Depo kökündeki `index.html` dosyasını tarayıcıda açın (tüm haritalar ve CSV/PNG bağlantıları `results/` altına işaret eder).
 
-## 🚀 Proje İçeriği ve Yapısı
+---
+
+## Proje Yapısı
 
 | Klasör/Dosya | Açıklama |
 | :--- | :--- |
-| `src/` | **Analiz Kodları:** GEE tabanlı analiz hattı (`pipeline.py`), CLI arayüzü (`cli.py`), yardımcı fonksiyonlar ve görselleştirme araçları. (AOI dosyası (`aoi.geojson`) buradadır.) |
-| `paper/` | **Çalışma Raporu:** Projenin metodolojisini, sonuçlarını ve değerlendirmesini içeren bilimsel rapor (LaTeX formatında). |
-| `results/` | **Çıktılar:** Üretilen haritalar, özet istatistikler ve diğer analiz sonuçları. |
-| `analysis.ipynb` | **Ana Çalışma Dosyası:** Proje sürecinin Jupyter Notebook üzerinden interaktif olarak yürütüldüğü dosya. |
-| `requirements.txt` | Proje için gerekli Python kütüphaneleri. |
+| `gee/` | Analiz kodları: `pipeline.py` (uçtan uca akış), `preprocess.py`, `indices.py`, `change.py` (dNBR sınıfları), `visualize.py`, `utils.py`, `aoi.py` ve `aoi.geojson`. |
+| `results/` | Üretilen haritalar (HTML/PNG) ve özet istatistikler (`summary_stats.csv`, `severity_areas.csv`). |
+| `paper/` | LaTeX raporu (`paper/main.tex`). |
+| `analysis.ipynb` | Jupyter defteri; adım adım analiz ve görselleştirme. |
+| `index.html` | Web sonuç sayfası (kart tabanlı, responsive). |
+| `requirements.txt` | Gerekli Python kütüphaneleri (yoksa aşağıdaki listeyi kullanın). |
 
-## ⚙️ Kurulum
+## Kurulum
 
-Proje, Google Earth Engine (GEE) API'sine erişim gerektirir.
+Önkoşul: Google Earth Engine (GEE) API erişimi.
 
-### 1\. Ortamın Hazırlanması
-
-Proje bağımlılıklarını izole etmek için bir sanal ortam oluşturun ve gerekli kütüphaneleri kurun (Jupyter dahil):
+1) Sanal ortam ve bağımlılıklar
 
 ```bash
-# Sanal ortam oluşturma
 python -m venv .venv
+# Linux/macOS
+source .venv/bin/activate
+# Windows
+.\.venv\Scripts\activate
 
-# Sanal ortamı etkinleştirme
-. .venv/bin/activate  # Linux/macOS
-# .venv\Scripts\activate  # Windows
-
-# Gerekli Python kütüphanelerini kurma
-pip install -r requirements.txt
+# Eğer `requirements.txt` yoksa aşağıdakileri kurun:
+pip install earthengine-api folium branca requests pandas
+# (opsiyonel ama tavsiye: jupyter)
+pip install jupyter
 ```
 
-### 2\. Earth Engine Kimlik Doğrulaması
-
-GEE API'sine erişim için kimlik doğrulamanızı yapın:
+2) Earth Engine kimlik doğrulama
 
 ```bash
 earthengine authenticate
 ```
 
-## 🏃 Çalıştırma
+## Çalıştırma
 
-Proje, analiz adımlarını interaktif olarak takip etme imkanı sunan Jupyter Notebook veya otomasyon amaçlı Komut Satırı Arayüzü (CLI) ile çalıştırılabilir.
+İki tip kullanım desteklenir: Jupyter defteri veya doğrudan Python çağrısı.
 
-### 1\. Jupyter Notebook ile Çalıştırma (Önerilen)
-
-Tüm analiz süreci, görselleştirmelerle birlikte **`analysis.ipynb`** dosyasında adım adım yürütülmüştür. Notebook'u başlatmak için:
+1) Jupyter Notebook (önerilen)
 
 ```bash
-# Sanal ortamı etkinleştirdiğinizden emin olun
 jupyter notebook analysis.ipynb
 ```
 
-### 2\. Komut Satırı Arayüzü (CLI) ile Çalıştırma (Alternatif)
+2) Python ile doğrudan çalıştırma (örnek)
 
-Analizi doğrudan CLI üzerinden çalıştırmak için **(AOI yolu güncellenmiştir)**:
+```python
+from gee.utils import ee_init
+from gee.pipeline import run_pipeline
 
-```bash
-python -m src.cli \
-  --pre-start 2025-07-10 --pre-end 2025-07-25 \
-  --post-start 2025-07-26 --post-end 2025-08-10 \
-  --aoi src/aoi.geojson \
-  --out results
+ee_init(project="karabukwildfire2025")  # Proje ID'nizi kullanın
+
+outputs = run_pipeline(
+    pre_start="2025-07-10", pre_end="2025-07-25",
+    post_start="2025-07-26", post_end="2025-08-10",
+    aoi_geojson="gee/aoi.geojson",
+    out_dir="results",
+    # Opsiyonel: AOI'ye göre dNBR eşiklerini özelleştir
+    dnbr_thresholds=(0.10, 0.27, 0.44, 0.66),
+    # Opsiyonel: minimum yama alanı (hektar)
+    min_patch_ha=0.5,
+)
+
+print(outputs)
 ```
 
-| Argüman | Açıklama |
-| :--- | :--- |
-| `--pre-start`, `--pre-end` | Yangın öncesi dönemin başlangıç ve bitiş tarihleri (YYYY-MM-DD). |
-| `--post-start`, `--post-end` | Yangın sonrası dönemin başlangıç ve bitiş tarihleri (YYYY-MM-DD). |
-| `--aoi` | Analiz Alanı sınırlarını içeren GeoJSON dosyasının yolu. (`src/aoi.geojson`) |
-| `--out` | Üretilen çıktıların (`.html` haritalar ve `.csv` istatistikler) kaydedileceği klasör. |
+Başarılı çalıştırma sonrası `results/` klasöründe interaktif haritalar (HTML) ve statik görseller (PNG) oluşur. Hızlı göz atmak için depo kökündeki `index.html` sayfasını açın.
 
-### Örnek Çıktılar
+Not: Bu çalışmada öncesi (pre) 10–25 Temmuz, sonrası (post) 26 Temmuz–10 Ağustos aralığı baz alınmıştır.
 
-Başarılı bir çalıştırmanın ardından `results/` klasöründe HTML haritalar (pre/post RGB, NDVI, NBR; dNDVI, dNBR; severity) ve `results/summary_stats.csv` dosyaları oluşur. Bu çıktılara yerel olarak erişmek için `results/index.html` dosyasını kullanabilirsiniz.
+## Rapor (LaTeX)
 
-## 📝 Lisans
+`paper/main.tex` derlemek için:
 
-Bu proje [Lisans Türü - Örn: MIT] lisansı altındadır. Detaylar için `LICENSE` dosyasına bakınız.
+```bash
+cd paper
+pdflatex -interaction=nonstopmode -halt-on-error main.tex
+```
+
+Notlar:
+- pdfLaTeX (LaTeX motoru) kullanılmalıdır; `pdftex`/`tex` (plain) ile derlemeyin.
+- Yardımcı dosyalar `.gitignore` ile hariç tutulur; raporu yerelde derleyin.
+## Lisans
+
+Bu proje MIT lisansı altındadır. Ayrıntılar için `LICENSE` dosyasına bakınız.
