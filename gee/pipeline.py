@@ -21,15 +21,10 @@ from .utils import ee_init
 from .aoi import get_aoi
 from .preprocess import prepare_composite
 from .indices import with_indices
-from .change import compute_diffs, classify_metric
+from .change import compute_diffs
 from .visualize import (
     vis_params,
     save_folium,
-    reduce_mean,
-    write_summary_csv,
-    compute_severity_areas,
-
-    write_kv_csv,
     export_report_pngs,
     export_truecolor_pngs,
 )
