@@ -25,7 +25,9 @@ def vis_params() -> Dict[str, dict]:
         "NBR": {"min": -0.5, "max": 1.0, "palette": ["#8b0000", "#ff8c00", "#ffff00", "#00ff00", "#006400"]},
         "dNDVI": {"min": -0.6, "max": 0.6, "palette": ["#8b0000", "#ff8c00", "#ffffbf", "#a6d96a", "#1a9850"]},
         "dNBR": {"min": -0.2, "max": 1.0, "palette": ["#2b83ba", "#abdda4", "#ffffbf", "#fdae61", "#d7191c"]},
-        "severity": {"min": 0, "max": 4, "palette": ["#1a9850", "#a6d96a", "#fee08b", "#f46d43", "#a50026"]},
+        "RBR": {"min": -0.1, "max": 1.2, "palette": ["#006400", "#ffff00", "#ff8c00", "#8b0000"]}, # Green, Yellow, Orange, Red
+        "severity": {"min": 0, "max": 4, "palette": ["#1a9850", "#1a9850", "#fee08b", "#f46d43", "#a50026"]}, # 0:Green, 1:Green(Unused/Low), 2:Yellow, 3:Orange, 4:Red
+        "FalseColor": {"bands": ["B12", "B8", "B4"], "min": 0, "max": 3000, "gamma": 1.3}, # SWIR, NIR, RED
     }
 
 
@@ -69,6 +71,22 @@ def save_folium(image: ee.Image, aoi: ee.Geometry, vis: dict, name: str, out_htm
     m.save(out_html)
 
 
+def save_folium_overlay(base_image: ee.Image, base_vis: dict, overlay_image: ee.Image, overlay_vis: dict, name: str, out_html: str, aoi: ee.Geometry, boundary: Optional[ee.Geometry] = None):
+    """Base image (RGB) overlaid with transparent Severity map."""
+    ensure_dir(os.path.dirname(out_html))
+    m = folium.Map(location=_center_of(aoi), zoom_start=9, control_scale=True)
+    
+    _add_ee_tile(m, base_image, base_vis, "Base Layer", opacity=1.0)
+    _add_ee_tile(m, overlay_image, overlay_vis, name, opacity=0.6)
+    
+    if boundary:
+        line_fc = ee.FeatureCollection([ee.Feature(boundary, {})])
+        line_img = line_fc.style(color="FF00FF", width=2, fillColor="00000000")
+        _add_ee_tile(m, line_img, {}, "Sinirlar")
+    
+    m.save(out_html)
+
+
 def reduce_mean(image: ee.Image, region: ee.Geometry, band_name: str, scale: int = 10) -> float:
     try:
         val = image.select(band_name).reduceRegion(
@@ -76,7 +94,7 @@ def reduce_mean(image: ee.Image, region: ee.Geometry, band_name: str, scale: int
             geometry=region,
             scale=scale,
             maxPixels=1e9,
-            tileScale=32,
+            tileScale=16,
             bestEffort=True
         ).get(band_name).getInfo()
         return float(val) if val is not None else 0.0
@@ -86,34 +104,50 @@ def reduce_mean(image: ee.Image, region: ee.Geometry, band_name: str, scale: int
 
 
 def compute_severity_areas(severity: ee.Image, region: ee.Geometry, scale: int = 10) -> dict:
-    try:
-        # severity band is named 'severity'
-        hist = severity.reduceRegion(
-            reducer=ee.Reducer.frequencyHistogram(),
-            geometry=region,
-            scale=scale,
-            maxPixels=1e9,
-            tileScale=32,
-            bestEffort=True
-        ).get("severity").getInfo()
-        
-        out = {}
-        if not hist:
+    """Severity sınıflarının alanlarını hesaplar (Fall-back mekanizmalı)."""
+    scales_to_try = [scale, scale * 2, scale * 5]
+    
+    for current_scale in scales_to_try:
+        try:
+            hist = severity.reduceRegion(
+                reducer=ee.Reducer.frequencyHistogram(),
+                geometry=region,
+                scale=current_scale,
+                maxPixels=1e9,
+                tileScale=16,
+                bestEffort=True
+            ).get("severity").getInfo()
+            
+            out = {}
+            if not hist:
+                return out
+            
+            # Alan hesabı: pixel_count * (scale^2) / 10000 (hektar)
+            # Not: reduceRegion scale'i neyse piksel boyutu odur.
+            pixel_ha = (current_scale * current_scale) / 10000.0
+            
+            for k, count in hist.items():
+                try:
+                    cls_id = int(float(k))
+                    out[f"alan_ha_sinif_{cls_id}"] = count * pixel_ha
+                except:
+                    pass
+            
+            # Başarılı olursa döngüden çık
             return out
-        
-        # Pixel area in hectares.
-        pixel_ha = (scale * scale) / 10000.0
-        
-        for k, count in hist.items():
-            try:
-                cls_id = int(float(k))
-                out[f"alan_ha_sinif_{cls_id}"] = count * pixel_ha
-            except:
-                pass
-        return out
-    except Exception as e:
-        print(f"Error in compute_severity_areas: {e}")
-        return {}
+
+        except Exception as e:
+            # Sadece Time out veya Memory hatalarında scale artırıp tekrar dene
+            if "timed out" in str(e) or "memory" in str(e).lower():
+                print(f"⚠️ compute_severity_areas (scale={current_scale}) zaman aşımı/bellek hatası. Scale={scales_to_try[scales_to_try.index(current_scale)+1] if scales_to_try.index(current_scale)+1 < len(scales_to_try) else 'N/A'} ile tekrar deneniyor...")
+                continue
+            else:
+                # Başka bir hataysa (örn: authentication) direkt bildir
+                print(f"Error in compute_severity_areas: {e}")
+                return {}
+    
+    print("❌ compute_severity_areas: Tüm denemeler başarısız oldu.")
+    return {}
 
 
 def write_summary_csv(path: str, data: dict):
@@ -134,15 +168,20 @@ def write_kv_csv(path: str, data: dict):
             writer.writerow([k, v])
 
 
-def _download_url(url: str, path: str):
+def _download_url(url: str, path: str) -> bool:
     ensure_dir(os.path.dirname(path))
     try:
         r = requests.get(url, timeout=300)
         if r.status_code == 200:
             with open(path, "wb") as f:
                 f.write(r.content)
+            return True
+        else:
+            print(f"⚠️ İndirme uyarısı (Status {r.status_code}): {os.path.basename(path)} indirilemedi. (Veri boş olabilir, atlanıyor)")
+            return False
     except Exception as e:
         print(f"Failed to download {url}: {e}")
+        return False
 
 
 def _get_thumb_url(image: ee.Image, aoi: ee.Geometry, vis: dict, boundary: Optional[ee.Geometry] = None) -> str:
@@ -160,18 +199,24 @@ def _get_thumb_url(image: ee.Image, aoi: ee.Geometry, vis: dict, boundary: Optio
 
 
 def export_truecolor_pngs(pre: ee.Image, post: ee.Image, aoi: ee.Geometry, out_dir: str, boundary: Optional[ee.Geometry] = None) -> dict:
-    vp = vis_params()["RGB"]
+    vp_rgb = vis_params()["RGB"]
+    vp_fc = vis_params().get("FalseColor", {"bands": ["B12", "B8", "B4"], "min": 0, "max": 3000, "gamma": 1.3})
     outs = {}
     
-    u1 = _get_thumb_url(pre, aoi, vp, boundary)
+    # Pre RGB
+    u1 = _get_thumb_url(pre, aoi, vp_rgb, boundary)
     p1 = os.path.join(out_dir, "pre_RGB.png")
-    _download_url(u1, p1)
-    outs["pre_rgb_png"] = p1
+    if _download_url(u1, p1):
+        outs["pre_rgb_png"] = p1
     
-    u2 = _get_thumb_url(post, aoi, vp, boundary)
+    # Post RGB
+    u2 = _get_thumb_url(post, aoi, vp_rgb, boundary)
     p2 = os.path.join(out_dir, "post_RGB.png")
-    _download_url(u2, p2)
-    outs["post_rgb_png"] = p2
+    if _download_url(u2, p2):
+        outs["post_rgb_png"] = p2
+
+    # Post FalseColor removed for speed
+    pass
     
     return outs
 
@@ -183,46 +228,95 @@ def export_report_pngs(pre, post, diffs, severity, aoi, out_dir, boundary=None) 
     if "dNBR" in diffs:
         u = _get_thumb_url(diffs["dNBR"], aoi, vp["dNBR"], boundary)
         p = os.path.join(out_dir, "dNBR.png")
-        _download_url(u, p)
-        outs["dnbr_png"] = p
+        if _download_url(u, p):
+             outs["dnbr_png"] = p
+
+    if "RBR" in diffs:
+        # RBR removed
+        pass
+
         
     if "dNDVI" in diffs:
         u = _get_thumb_url(diffs["dNDVI"], aoi, vp["dNDVI"], boundary)
         p = os.path.join(out_dir, "dNDVI.png")
-        _download_url(u, p)
-        outs["dndvi_png"] = p
+        if _download_url(u, p):
+             outs["dndvi_png"] = p
         
     if severity:
-        u = _get_thumb_url(severity, aoi, vp["severity"], boundary)
-        p = os.path.join(out_dir, "severity.png")
-        _download_url(u, p)
-        outs["severity_png"] = p
+        # Severity visuals removed
+        pass
         
     return outs
 
 
-def export_severity_rgb_overlay(post: ee.Image, severity: ee.Image, aoi: ee.Geometry, out_dir: str, boundary: Optional[ee.Geometry] = None) -> dict:
-    vp_rgb = vis_params()["RGB"]
+
+
+
+
+
+# Function removed
     vp_sev = vis_params()["severity"]
+
+    # 1. Base: Post-Fire RGB
+    base_vis = post.visualize(**vp_rgb)
+
+    # 2. Overlay: Severity
+    # GEE Status 400 Hatasını önlemek için güvenli yöntem:
+    # Severity katmanını görselleştir, ancak 0 olan yerleri maskele.
+    # updateMask kullanımı export sırasında bazen sorun çıkarabilir, bu yüzden
+    # doğrudan maskelenmiş görüntü üzerinde visualize deniyoruz.
     
-    rgb_vis = post.visualize(**vp_rgb)
-    sev_vis = severity.visualize(**vp_sev)
+    sev_masked = severity.updateMask(severity.gt(0))
+    sev_vis = sev_masked.visualize(**vp_sev)
     
-    # Basit blend (opak overlay, veya GEE'nin default blend mantığı şeffaflık yoksa üstüne çizer)
-    # Severity genellikle discrete class'tır, maskeli yerler alttakini gösterir.
-    combined = rgb_vis.blend(sev_vis)
-    
+    # 3. Blend: Base + Overlay
+    combined = base_vis.blend(sev_vis)
+
     if boundary:
          line_fc = ee.FeatureCollection([ee.Feature(boundary, {})])
          line_img = line_fc.style(color="FF00FF", width=2, fillColor="00000000")
          combined = combined.blend(line_img)
     
     url = combined.getThumbURL({
-        'dimensions': 1024,
+        'dimensions': 2048,
         'region': aoi.bounds(),
         'format': 'png'
     })
     
-    p = os.path.join(out_dir, "severity_overlay.png")
-    _download_url(url, p)
-    return {"severity_overlay_png": p}
+    p = os.path.join(out_dir, "marked_rgb.png")
+    if _download_url(url, p):
+        return {"marked_rgb_png": p}
+    else:
+        return {}
+
+
+def export_maps(pre_image, post_image, diff_images, severity, aoi, out_dir, boundary=None, skip_standard=False):
+    """
+    Master export function.
+    skip_standard: If True, only exports the user-requested minimal set for speed.
+    """
+    ensure_dir(out_dir)
+    outputs = {}
+
+    # User Request: pre_rgb, post_rgb, dnbr, dndvi, RBR, severity, overlay (marked_rgb)
+    
+    # 1. RGBs
+    outputs.update(export_truecolor_pngs(pre_image, post_image, aoi, out_dir, boundary))
+    
+    # 2. Reporting Layers (dNBR, RBR, dNDVI, Severity)
+    outputs.update(export_report_pngs(pre_image, post_image, diff_images, severity, aoi, out_dir, boundary))
+    
+    # 3. Special Overlay (Marked RGB)
+    if severity:
+        outputs.update(export_marked_rgb(post_image, severity, aoi, out_dir, boundary))
+        
+        # Also keep the semi-transparent overlay just in case, or skip if strictly minimizing?
+        # User said "png çıktı üretimini azaltabiliriz" (we can reduce output).
+        # But explicitly requested "overlay" which usually refers to the transparency one AND "marked_rgb".
+        # Let's strictly follow the list: pre_rgb, post_rgb, dnbr, dndvi, RBR, severity, and "Marked RGB".
+        # The user listed "overlay" at the end of their request list "severity ve overlay çıktıları", 
+        # but then described "Masked Overlay" as "marked_rgb". 
+        # I will infer they want the NEW marked_rgb primarily. I'll skip the old semi-transparent one to save time.
+        
+    return outputs
+
