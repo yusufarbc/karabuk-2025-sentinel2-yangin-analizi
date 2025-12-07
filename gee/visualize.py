@@ -3,12 +3,12 @@ from __future__ import annotations
 from typing import Dict, Optional
 import os
 import csv
+import requests
+import json
 
 import ee
 import folium
 from branca.colormap import LinearColormap
-import requests
-import json
 
 from .utils import ensure_dir
 
@@ -55,195 +55,174 @@ def _add_ee_tile(m: folium.Map, image: ee.Image, vis: dict, name: str, opacity: 
     ).add_to(m)
 
 
-def _add_continuous_legend(m: folium.Map, title: str, palette, vmin: float, vmax: float) -> None:
-    cmap = LinearColormap(colors=list(palette), vmin=vmin, vmax=vmax)
-    cmap.caption = title
-    m.add_child(cmap)
-
-
-def _add_severity_legend(m: folium.Map) -> None:
-    labels = ["Yanmamış/Düşük", "Düşük", "Orta-Düşük", "Orta-Yüksek", "Yüksek"]
-    colors = ["#1a9850", "#a6d96a", "#fee08b", "#f46d43", "#a50026"]
-    html = [
-        '<div style="position: fixed; bottom: 25px; left: 10px; z-index: 9999; '
-        'background: white; padding: 10px; border: 2px solid #bbb; '
-        'font-size: 12px; line-height: 14px;">',
-        '<b>dNBR Şiddeti</b><br/>'
-    ]
-    for c, lab in zip(colors, labels):
-        html.append(f'<i style="background:{c};width:12px;height:12px;display:inline-block;margin-right:6px;"></i>{lab}<br/>')
-    html.append('</div>')
-    folium.map.Marker(location=[0, 0], icon=folium.DivIcon(html=''.join(html))).add_to(m)
-
-
-def save_folium(image: ee.Image, aoi: ee.Geometry, vis: dict, name: str, out_html: str):
+def save_folium(image: ee.Image, aoi: ee.Geometry, vis: dict, name: str, out_html: str, boundary: Optional[ee.Geometry] = None):
     ensure_dir(os.path.dirname(out_html))
     m = folium.Map(location=_center_of(aoi), zoom_start=9, control_scale=True)
     _add_ee_tile(m, image, vis, name)
-    folium.LayerControl().add_to(m)
-    try:
-        if "Severity" in name:
-            _add_severity_legend(m)
-        elif all(k in vis for k in ("palette", "min", "max")):
-            _add_continuous_legend(m, name, vis["palette"], float(vis["min"]), float(vis["max"]))
-    except Exception:
-        pass
+    
+    if boundary:
+        # Sınırları ekle (Magenta kenarlık, içi boş)
+        line_fc = ee.FeatureCollection([ee.Feature(boundary, {})])
+        line_img = line_fc.style(color="FF00FF", width=2, fillColor="00000000")
+        _add_ee_tile(m, line_img, {}, "Sinirlar")
+    
     m.save(out_html)
 
 
-def reduce_mean(image: ee.Image, aoi: ee.Geometry, band: str, scale: int = 20) -> float:
-    stats = image.select(band).reduceRegion(
-        reducer=ee.Reducer.mean(), geometry=aoi, scale=scale, maxPixels=1e13, tileScale=4
-    )
-    val = stats.get(band).getInfo()
-    return float(val) if val is not None else float("nan")
-
-
-def write_summary_csv(path: str, rows: Dict[str, float]):
-    ensure_dir(os.path.dirname(path))
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        w.writerow(["metric", "value"])
-        for k, v in rows.items():
-            w.writerow([k, v])
-
-
-def compute_severity_areas(severity: ee.Image, aoi: ee.Geometry, *, scale: int = 10) -> Dict[str, float]:
-    """Şiddet sınıfı başına alan hesapla (hektar)."""
-    labels = [
-        "severity_0_yanmamis",
-        "severity_1_dusuk",
-        "severity_2_orta_dusuk",
-        "severity_3_orta_yuksek",
-        "severity_4_yuksek",
-    ]
-    areas = {}
-    for idx, label in enumerate(labels):
-        mask = severity.eq(idx)
-        area_img = ee.Image.pixelArea().updateMask(mask)
-        area_m2 = area_img.reduceRegion(
-            reducer=ee.Reducer.sum(), geometry=aoi, scale=scale, maxPixels=1e13, tileScale=4
-        ).get("area")
-        val = ee.Number(area_m2).divide(10000).getInfo()  # hectares
-        areas[label] = float(val) if val is not None else 0.0
-    # Toplam yanmış alan (sınıf 1..4)
-    burned = sum(areas[k] for k in labels[1:])
-    areas["burned_total_ha"] = burned
-    return areas
-
-
-def write_kv_csv(path: str, rows: Dict[str, float]):
-    ensure_dir(os.path.dirname(path))
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        w.writerow(["key", "value"])
-        for k, v in rows.items():
-            w.writerow([k, v])
-
-
-def download_png(image: ee.Image, aoi: ee.Geometry, vis: dict, out_path: str, *, scale: Optional[int] = 20, dimensions: Optional[int] = None) -> str:
-    """Görselleştirilmiş ee.Image için rapor dostu PNG indir. Hata durumunda (bellek limiti) daha düşük çözünürlükle tekrar dener."""
-    ensure_dir(os.path.dirname(out_path))
-    vis_img = image.visualize(**vis)
-    
-    # Geometriyi basitleştir: Bounding Box kullan
+def reduce_mean(image: ee.Image, region: ee.Geometry, band_name: str, scale: int = 10) -> float:
     try:
-        region_geom = aoi.bounds() 
-        region = region_geom.getInfo()
+        val = image.select(band_name).reduceRegion(
+            reducer=ee.Reducer.mean(),
+            geometry=region,
+            scale=scale,
+            maxPixels=1e9,
+            tileScale=32,
+            bestEffort=True
+        ).get(band_name).getInfo()
+        return float(val) if val is not None else 0.0
     except Exception as e:
-        print(f"Uyarı: Server-side bounds hesabı başarısız ({e}). Orijinal AOI kullanılıyor.")
-        region = aoi.getInfo()
+        print(f"Error in reduce_mean: {e}")
+        return 0.0
 
-    def _attempt_download(dims, sc, retry_count=0):
-        params: Dict[str, object] = {
-            "region": json.dumps(region), 
-            "format": "png",
-            "crs": "EPSG:4326"
-        }
+
+def compute_severity_areas(severity: ee.Image, region: ee.Geometry, scale: int = 10) -> dict:
+    try:
+        # severity band is named 'severity'
+        hist = severity.reduceRegion(
+            reducer=ee.Reducer.frequencyHistogram(),
+            geometry=region,
+            scale=scale,
+            maxPixels=1e9,
+            tileScale=32,
+            bestEffort=True
+        ).get("severity").getInfo()
         
-        if dims is not None:
-            params["dimensions"] = dims
-        elif sc is not None:
-            params["scale"] = sc
-
-        url = vis_img.getThumbURL(params)
+        out = {}
+        if not hist:
+            return out
         
-        try:
-            with requests.get(url, stream=True) as r:
-                if r.status_code != 200:
-                    try:
-                        err_msg = r.json()
-                    except:
-                        err_msg = r.text
-                        
-                    # Eğer bellek hatası ise (400) ve henüz retry yapmadıysak
-                    if r.status_code == 400 and retry_count < 2:
-                        print(f"⚠️ GEE Bellek Hatası (400) algılandı. Çözünürlük düşürülerek tekrar deneniyor... ({os.path.basename(out_path)})")
-                        
-                        new_dims = dims // 2 if dims else None
-                        new_scale = sc * 2 if sc else None
-                        
-                        # Eğer dims verilmediyse ama scale verilmediyse hesaplanamaz, o yüzden scale 2 katına çıkar
-                        # (dims öncelikli olduğu için dims varsa ona bakıyoruz)
-                        
-                        return _attempt_download(new_dims, new_scale, retry_count + 1)
-                    
-                    print(f"GEE download error for {os.path.basename(out_path)}: {r.status_code} - {err_msg}")
-                    r.raise_for_status()
-                    
-                with open(out_path, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        if chunk:
-                            f.write(chunk)
-        except Exception as e:
-            # Recursive çağrıdan başarılı döndüyse burası çalışmamalı, üstteki return çıkış yapar.
-            # Ancak request hatası fırlatırsa buraya düşeriz.
-            if retry_count < 2 and "400" in str(e):
-                 # Yukarıdaki yakalama bloğu status code kontrolü yapıyordu, burası exception içindeki mesajı kollar
-                 # Ancak requests.get hata fırlatmaz (raise_for_status çağrılmadıkça), o yüzden üstteki blok daha güvenli.
-                 # Burası network hataları için.
-                 pass
-            raise e
-
-    _attempt_download(dimensions, scale)
-    return out_path
+        # Pixel area in hectares.
+        pixel_ha = (scale * scale) / 10000.0
+        
+        for k, count in hist.items():
+            try:
+                cls_id = int(float(k))
+                out[f"alan_ha_sinif_{cls_id}"] = count * pixel_ha
+            except:
+                pass
+        return out
+    except Exception as e:
+        print(f"Error in compute_severity_areas: {e}")
+        return {}
 
 
-def export_report_pngs(*, pre: ee.Image, post: ee.Image, diffs: Dict[str, ee.Image], severity: ee.Image, aoi: ee.Geometry, out_dir: str = "results") -> Dict[str, str]:
-    """Raporlar için ana analiz katmanlarını PNG olarak dışa aktar."""
-    ensure_dir(out_dir)
+def write_summary_csv(path: str, data: dict):
+    ensure_dir(os.path.dirname(path))
+    keys = list(data.keys())
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=keys)
+        writer.writeheader()
+        writer.writerow(data)
+
+
+def write_kv_csv(path: str, data: dict):
+    ensure_dir(os.path.dirname(path))
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Key", "Value"])
+        for k, v in data.items():
+            writer.writerow([k, v])
+
+
+def _download_url(url: str, path: str):
+    ensure_dir(os.path.dirname(path))
+    try:
+        r = requests.get(url, timeout=300)
+        if r.status_code == 200:
+            with open(path, "wb") as f:
+                f.write(r.content)
+    except Exception as e:
+        print(f"Failed to download {url}: {e}")
+
+
+def _get_thumb_url(image: ee.Image, aoi: ee.Geometry, vis: dict, boundary: Optional[ee.Geometry] = None) -> str:
+    img_vis = image.visualize(**vis)
+    if boundary:
+         line_fc = ee.FeatureCollection([ee.Feature(boundary, {})])
+         line_img = line_fc.style(color="FF00FF", width=2, fillColor="00000000")
+         img_vis = img_vis.blend(line_img)
+    
+    return img_vis.getThumbURL({
+        'dimensions': 1024,
+        'region': aoi.bounds(), 
+        'format': 'png'
+    })
+
+
+def export_truecolor_pngs(pre: ee.Image, post: ee.Image, aoi: ee.Geometry, out_dir: str, boundary: Optional[ee.Geometry] = None) -> dict:
+    vp = vis_params()["RGB"]
+    outs = {}
+    
+    u1 = _get_thumb_url(pre, aoi, vp, boundary)
+    p1 = os.path.join(out_dir, "pre_RGB.png")
+    _download_url(u1, p1)
+    outs["pre_rgb_png"] = p1
+    
+    u2 = _get_thumb_url(post, aoi, vp, boundary)
+    p2 = os.path.join(out_dir, "post_RGB.png")
+    _download_url(u2, p2)
+    outs["post_rgb_png"] = p2
+    
+    return outs
+
+
+def export_report_pngs(pre, post, diffs, severity, aoi, out_dir, boundary=None) -> dict:
+    outs = {}
     vp = vis_params()
-    outs: Dict[str, str] = {}
-    outs["pre_ndvi_png"] = os.path.join(out_dir, "pre_NDVI.png")
-    download_png(pre.select("NDVI"), aoi, vp["NDVI"], outs["pre_ndvi_png"], dimensions=2560)
-
-    outs["post_ndvi_png"] = os.path.join(out_dir, "post_NDVI.png")
-    download_png(post.select("NDVI"), aoi, vp["NDVI"], outs["post_ndvi_png"], dimensions=2560)
-
-    outs["pre_nbr_png"] = os.path.join(out_dir, "pre_NBR.png")
-    download_png(pre.select("NBR"), aoi, vp["NBR"], outs["pre_nbr_png"], dimensions=2560)
-
-    outs["post_nbr_png"] = os.path.join(out_dir, "post_NBR.png")
-    download_png(post.select("NBR"), aoi, vp["NBR"], outs["post_nbr_png"], dimensions=2560)
-
-    outs["dndvi_png"] = os.path.join(out_dir, "dNDVI.png")
-    download_png(diffs["dNDVI"], aoi, vp["dNDVI"], outs["dndvi_png"], dimensions=2560)
-
-    outs["dnbr_png"] = os.path.join(out_dir, "dNBR.png")
-    download_png(diffs["dNBR"], aoi, vp["dNBR"], outs["dnbr_png"], dimensions=2560)
-
-    outs["severity_png"] = os.path.join(out_dir, "severity.png")
-    download_png(severity, aoi, vp["severity"], outs["severity_png"], dimensions=2560)
+    
+    if "dNBR" in diffs:
+        u = _get_thumb_url(diffs["dNBR"], aoi, vp["dNBR"], boundary)
+        p = os.path.join(out_dir, "dNBR.png")
+        _download_url(u, p)
+        outs["dnbr_png"] = p
+        
+    if "dNDVI" in diffs:
+        u = _get_thumb_url(diffs["dNDVI"], aoi, vp["dNDVI"], boundary)
+        p = os.path.join(out_dir, "dNDVI.png")
+        _download_url(u, p)
+        outs["dndvi_png"] = p
+        
+    if severity:
+        u = _get_thumb_url(severity, aoi, vp["severity"], boundary)
+        p = os.path.join(out_dir, "severity.png")
+        _download_url(u, p)
+        outs["severity_png"] = p
+        
     return outs
 
 
-def export_truecolor_pngs(*, pre: ee.Image, post: ee.Image, aoi: ee.Geometry, out_dir: str = "results", min_val: int = 0, max_val: int = 3000, gamma: float = 1.2) -> Dict[str, str]:
-    """Raporlar için öncesi/sonrası gerçek renkli (B4,B3,B2) PNG'leri dışa aktar."""
-    ensure_dir(out_dir)
-    vis_rgb = {"bands": ["B4", "B3", "B2"], "min": min_val, "max": max_val, "gamma": [gamma, gamma, gamma]}
-    outs: Dict[str, str] = {}
-    outs["pre_rgb_png"] = os.path.join(out_dir, "pre_RGB.png")
-    download_png(pre, aoi, vis_rgb, outs["pre_rgb_png"], dimensions=1600)
-    outs["post_rgb_png"] = os.path.join(out_dir, "post_RGB.png")
-    download_png(post, aoi, vis_rgb, outs["post_rgb_png"], dimensions=1600)
-    return outs
+def export_severity_rgb_overlay(post: ee.Image, severity: ee.Image, aoi: ee.Geometry, out_dir: str, boundary: Optional[ee.Geometry] = None) -> dict:
+    vp_rgb = vis_params()["RGB"]
+    vp_sev = vis_params()["severity"]
+    
+    rgb_vis = post.visualize(**vp_rgb)
+    sev_vis = severity.visualize(**vp_sev)
+    
+    # Basit blend (opak overlay, veya GEE'nin default blend mantığı şeffaflık yoksa üstüne çizer)
+    # Severity genellikle discrete class'tır, maskeli yerler alttakini gösterir.
+    combined = rgb_vis.blend(sev_vis)
+    
+    if boundary:
+         line_fc = ee.FeatureCollection([ee.Feature(boundary, {})])
+         line_img = line_fc.style(color="FF00FF", width=2, fillColor="00000000")
+         combined = combined.blend(line_img)
+    
+    url = combined.getThumbURL({
+        'dimensions': 1024,
+        'region': aoi.bounds(),
+        'format': 'png'
+    })
+    
+    p = os.path.join(out_dir, "severity_overlay.png")
+    _download_url(url, p)
+    return {"severity_overlay_png": p}

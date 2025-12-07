@@ -96,6 +96,12 @@ pdflatex -interaction=nonstopmode -halt-on-error main.tex
 Notlar:
 - pdfLaTeX (LaTeX motoru) kullanılmalıdır; `pdftex`/`tex` (plain) ile derlemeyin.
 - Yardımcı dosyalar `.gitignore` ile hariç tutulur; raporu yerelde derleyin.
+## Dokümantasyon
+
+Detaylı teknik bilgi ve kullanım kılavuzları `docs/` klasöründedir:
+*   [📄 Metodoloji ve Teknik Yaklaşım](docs/metodoloji.md): Kullanılan indeksler, USGS standartları ve gürültü temizleme algoritmaları.
+*   [📊 Sonuçların Yorumlanması](docs/sonuclar.md): Harita türleri, renk kodları ve özel rapor görselleri hakkında rehber.
+
 ## Lisans
 
 Bu proje MIT lisansı altındadır. Ayrıntılar için `LICENSE` dosyasına bakınız.
