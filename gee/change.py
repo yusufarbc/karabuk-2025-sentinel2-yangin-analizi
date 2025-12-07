@@ -4,7 +4,7 @@ import ee
 
 
 def compute_diffs(pre: ee.Image, post: ee.Image) -> dict:
-    """Compute difference images.
+    """Fark görüntülerini hesapla (Compute difference images).
 
     dNDVI = post - pre (vejetasyon düşüşleri negatif)
     dNBR  = pre - post (yanıklık artışı pozitif)
@@ -18,14 +18,14 @@ def classify_dnbr(
     dnbr: ee.Image,
     thresholds: tuple[float, float, float, float] | None = None,
 ) -> ee.Image:
-    """Classify dNBR into severity classes 0..4 (unburned->high).
+    """dNBR'yi şiddet sınıflarına (0..4) ayırır.
 
-    thresholds: optional tuple (t0, t1, t2, t3). Defaults to USGS-like:
-      < 0.10: 0 (Unburned/Low)
-      0.10–0.27: 1 (Low)
-      0.27–0.44: 2 (Moderate-Low)
-      0.44–0.66: 3 (Moderate-High)
-      > 0.66: 4 (High)
+    thresholds: opsiyonel (t0, t1, t2, t3). Varsayılan USGS-benzeri:
+      < 0.10: 0 (Yanmamış/Düşük)
+      0.10–0.27: 1 (Düşük)
+      0.27–0.44: 2 (Orta-Düşük)
+      0.44–0.66: 3 (Orta-Yüksek)
+      > 0.66: 4 (Yüksek)
     """
     if thresholds is None:
         t0, t1, t2, t3 = 0.10, 0.27, 0.44, 0.66

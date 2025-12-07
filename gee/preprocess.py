@@ -4,7 +4,7 @@ import ee
 
 
 def _mask_s2_sr(image: ee.Image) -> ee.Image:
-    """Simple cloud/cirrus mask for Sentinel-2 SR (QA60 bits 10/11)."""
+    """Sentinel-2 SR için basit bulut/cirrus maskesi (QA60 bit 10/11)."""
     qa = image.select("QA60")
     cloud_bit = 1 << 10
     cirrus_bit = 1 << 11
@@ -13,10 +13,10 @@ def _mask_s2_sr(image: ee.Image) -> ee.Image:
 
 
 def _mask_scl_water_and_shadows(image: ee.Image) -> ee.Image:
-    """Use S2 SCL to mask water and cloud shadows optionally.
+    """S2 SCL kullanarak su ve bulut gölgelerini maskele (opsiyonel).
 
-    SCL classes (common): 6=Water, 3=Cloud shadow, 8=Cloud medium prob, 9=Cloud high prob, 10=Thin cirrus.
-    We only mask water here; clouds are handled in QA60 mask above.
+    SCL sınıfları (yaygın): 6=Su, 3=Bulut gölgesi, 8=Orta olasılıklı bulut, 9=Yüksek olasılıklı bulut, 10=İnce cirrus.
+    Burada sadece suyu maskeliyoruz; bulutlar yukarıda QA60 ile halledildi.
     """
     scl = image.select("SCL")
     water = scl.eq(6)
@@ -25,16 +25,28 @@ def _mask_scl_water_and_shadows(image: ee.Image) -> ee.Image:
 
 
 def prepare_composite(aoi: ee.Geometry, start: str, end: str) -> ee.Image:
-    """Prepare median Sentinel-2 SR composite clipped to AOI for date range.
+    """Tarih aralığı için AOI'ye göre kesilmiş medyan Sentinel-2 SR kompoziti hazırlar.
 
-    Applies QA60 cloud/cirrus mask and SCL-based water mask.
+    QA60 bulut/cirrus maskesi ve SCL tabanlı su maskesi uygular.
     """
     col = (
         ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
         .filterDate(start, end)
         .filterBounds(aoi)
         .map(_mask_s2_sr)
-        # Karabük iç bölge: SCL su maskesi uygulanmaz
+        .map(_mask_scl_water_and_shadows)
     )
+    # Median almadan önce koleksiyon boyutunu kontrol et
+    # (Boşsa hata verebilir, ama pipeline içinde try-catch var)
+    
+    # Kompozit oluştur
     img = col.median().clip(aoi)
+
+    # Görüntülerin tarih aralığını metadata olarak ekle
+    # Gerçek piksel tarihi piksel bazında değişir (mosaic), 
+    # bu yüzden genel analiz aralığını not düşüyoruz.
+    img = img.set({
+        "system:time_start": ee.Date(start).millis(),
+        "date_range": f"{start}_{end}"
+    })
     return img

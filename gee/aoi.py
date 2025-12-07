@@ -7,12 +7,24 @@ import ee
 from .utils import load_aoi_geojson
 
 
+def get_karabuk_province() -> ee.Geometry:
+    """Karabük il sınırlarını FAO/GAUL verisetinden getir."""
+    dataset = ee.FeatureCollection("FAO/GAUL/2015/level1")
+    karabuk = dataset.filter(ee.Filter.eq("ADM1_NAME", "Karabuk"))
+    return karabuk.geometry()
+
+
+
 def get_aoi(path: Optional[str] = None) -> ee.Geometry:
     """AOI geometriyi döndür.
 
     - `path` verilirse ve mevcutsa GeoJSON okunur.
+    - `path` == "KARABUK_PROVINCE" ise il sınırları getirilir.
     - Aksi halde Karabük bölgesi için makul bir bbox döndürülür.
     """
+    if path == "KARABUK_PROVINCE":
+        return get_karabuk_province()
+
     g = load_aoi_geojson(path) if path else None
     if g is not None:
         return g

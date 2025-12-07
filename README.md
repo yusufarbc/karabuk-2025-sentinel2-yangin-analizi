@@ -1,6 +1,6 @@
-# KarabükWildfire2025: Orman Yangını Etkisi Analizi
+# karabuk-2025-sentinel2-yangin-analizi
 
-Sentinel‑2 uydu görüntüleri kullanılarak 2025 Karabük yangınının etkilerini (yanma şiddeti, hasar) değerlendirmeye yönelik Google Earth Engine (GEE) tabanlı analiz projesi. NDVI, NBR ve fark indeksleri (dNDVI, dNBR) üretilir; dNBR eşikleriyle şiddet sınıflandırması yapılır.
+2025 Karabük orman yangınının Sentinel-2 uydu görüntüleriyle yanma şiddeti (dNBR) ve bitki örtüsü kaybı analizi.
 
 ## Canlı Demo ve Sonuçlar
 

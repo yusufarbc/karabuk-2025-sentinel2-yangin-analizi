@@ -8,6 +8,7 @@ import ee
 import folium
 from branca.colormap import LinearColormap
 import requests
+import json
 
 from .utils import ensure_dir
 
@@ -61,13 +62,13 @@ def _add_continuous_legend(m: folium.Map, title: str, palette, vmin: float, vmax
 
 
 def _add_severity_legend(m: folium.Map) -> None:
-    labels = ["Unburned/Low", "Low", "Moderate-Low", "Moderate-High", "High"]
+    labels = ["Yanmamış/Düşük", "Düşük", "Orta-Düşük", "Orta-Yüksek", "Yüksek"]
     colors = ["#1a9850", "#a6d96a", "#fee08b", "#f46d43", "#a50026"]
     html = [
         '<div style="position: fixed; bottom: 25px; left: 10px; z-index: 9999; '
         'background: white; padding: 10px; border: 2px solid #bbb; '
         'font-size: 12px; line-height: 14px;">',
-        '<b>dNBR Severity</b><br/>'
+        '<b>dNBR Şiddeti</b><br/>'
     ]
     for c, lab in zip(colors, labels):
         html.append(f'<i style="background:{c};width:12px;height:12px;display:inline-block;margin-right:6px;"></i>{lab}<br/>')
@@ -92,7 +93,7 @@ def save_folium(image: ee.Image, aoi: ee.Geometry, vis: dict, name: str, out_htm
 
 def reduce_mean(image: ee.Image, aoi: ee.Geometry, band: str, scale: int = 20) -> float:
     stats = image.select(band).reduceRegion(
-        reducer=ee.Reducer.mean(), geometry=aoi, scale=scale, maxPixels=1e13
+        reducer=ee.Reducer.mean(), geometry=aoi, scale=scale, maxPixels=1e13, tileScale=4
     )
     val = stats.get(band).getInfo()
     return float(val) if val is not None else float("nan")
@@ -108,24 +109,24 @@ def write_summary_csv(path: str, rows: Dict[str, float]):
 
 
 def compute_severity_areas(severity: ee.Image, aoi: ee.Geometry, *, scale: int = 10) -> Dict[str, float]:
-    """Compute area (hectares) per severity class label."""
+    """Şiddet sınıfı başına alan hesapla (hektar)."""
     labels = [
-        "severity_0_unburned",
-        "severity_1_low",
-        "severity_2_modlow",
-        "severity_3_modhigh",
-        "severity_4_high",
+        "severity_0_yanmamis",
+        "severity_1_dusuk",
+        "severity_2_orta_dusuk",
+        "severity_3_orta_yuksek",
+        "severity_4_yuksek",
     ]
     areas = {}
     for idx, label in enumerate(labels):
         mask = severity.eq(idx)
         area_img = ee.Image.pixelArea().updateMask(mask)
         area_m2 = area_img.reduceRegion(
-            reducer=ee.Reducer.sum(), geometry=aoi, scale=scale, maxPixels=1e13
+            reducer=ee.Reducer.sum(), geometry=aoi, scale=scale, maxPixels=1e13, tileScale=4
         ).get("area")
         val = ee.Number(area_m2).divide(10000).getInfo()  # hectares
         areas[label] = float(val) if val is not None else 0.0
-    # Total burned (classes 1..4)
+    # Toplam yanmış alan (sınıf 1..4)
     burned = sum(areas[k] for k in labels[1:])
     areas["burned_total_ha"] = burned
     return areas
@@ -141,54 +142,103 @@ def write_kv_csv(path: str, rows: Dict[str, float]):
 
 
 def download_png(image: ee.Image, aoi: ee.Geometry, vis: dict, out_path: str, *, scale: Optional[int] = 20, dimensions: Optional[int] = None) -> str:
-    """Download a report-friendly PNG for a visualized ee.Image."""
+    """Görselleştirilmiş ee.Image için rapor dostu PNG indir. Hata durumunda (bellek limiti) daha düşük çözünürlükle tekrar dener."""
     ensure_dir(os.path.dirname(out_path))
     vis_img = image.visualize(**vis)
-    params: Dict[str, object] = {"region": aoi.getInfo(), "format": "png"}
-    if dimensions is not None:
-        params["dimensions"] = dimensions
-    elif scale is not None:
-        params["scale"] = scale
-    url = vis_img.getThumbURL(params)
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(out_path, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
+    
+    # Geometriyi basitleştir: Bounding Box kullan
+    try:
+        region_geom = aoi.bounds() 
+        region = region_geom.getInfo()
+    except Exception as e:
+        print(f"Uyarı: Server-side bounds hesabı başarısız ({e}). Orijinal AOI kullanılıyor.")
+        region = aoi.getInfo()
+
+    def _attempt_download(dims, sc, retry_count=0):
+        params: Dict[str, object] = {
+            "region": json.dumps(region), 
+            "format": "png",
+            "crs": "EPSG:4326"
+        }
+        
+        if dims is not None:
+            params["dimensions"] = dims
+        elif sc is not None:
+            params["scale"] = sc
+
+        url = vis_img.getThumbURL(params)
+        
+        try:
+            with requests.get(url, stream=True) as r:
+                if r.status_code != 200:
+                    try:
+                        err_msg = r.json()
+                    except:
+                        err_msg = r.text
+                        
+                    # Eğer bellek hatası ise (400) ve henüz retry yapmadıysak
+                    if r.status_code == 400 and retry_count < 2:
+                        print(f"⚠️ GEE Bellek Hatası (400) algılandı. Çözünürlük düşürülerek tekrar deneniyor... ({os.path.basename(out_path)})")
+                        
+                        new_dims = dims // 2 if dims else None
+                        new_scale = sc * 2 if sc else None
+                        
+                        # Eğer dims verilmediyse ama scale verilmediyse hesaplanamaz, o yüzden scale 2 katına çıkar
+                        # (dims öncelikli olduğu için dims varsa ona bakıyoruz)
+                        
+                        return _attempt_download(new_dims, new_scale, retry_count + 1)
+                    
+                    print(f"GEE download error for {os.path.basename(out_path)}: {r.status_code} - {err_msg}")
+                    r.raise_for_status()
+                    
+                with open(out_path, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if chunk:
+                            f.write(chunk)
+        except Exception as e:
+            # Recursive çağrıdan başarılı döndüyse burası çalışmamalı, üstteki return çıkış yapar.
+            # Ancak request hatası fırlatırsa buraya düşeriz.
+            if retry_count < 2 and "400" in str(e):
+                 # Yukarıdaki yakalama bloğu status code kontrolü yapıyordu, burası exception içindeki mesajı kollar
+                 # Ancak requests.get hata fırlatmaz (raise_for_status çağrılmadıkça), o yüzden üstteki blok daha güvenli.
+                 # Burası network hataları için.
+                 pass
+            raise e
+
+    _attempt_download(dimensions, scale)
     return out_path
 
 
 def export_report_pngs(*, pre: ee.Image, post: ee.Image, diffs: Dict[str, ee.Image], severity: ee.Image, aoi: ee.Geometry, out_dir: str = "results") -> Dict[str, str]:
-    """Export key analysis layers as PNGs for reports."""
+    """Raporlar için ana analiz katmanlarını PNG olarak dışa aktar."""
     ensure_dir(out_dir)
     vp = vis_params()
     outs: Dict[str, str] = {}
     outs["pre_ndvi_png"] = os.path.join(out_dir, "pre_NDVI.png")
-    download_png(pre.select("NDVI"), aoi, vp["NDVI"], outs["pre_ndvi_png"], dimensions=1280)
+    download_png(pre.select("NDVI"), aoi, vp["NDVI"], outs["pre_ndvi_png"], dimensions=2560)
 
     outs["post_ndvi_png"] = os.path.join(out_dir, "post_NDVI.png")
-    download_png(post.select("NDVI"), aoi, vp["NDVI"], outs["post_ndvi_png"], dimensions=1280)
+    download_png(post.select("NDVI"), aoi, vp["NDVI"], outs["post_ndvi_png"], dimensions=2560)
 
     outs["pre_nbr_png"] = os.path.join(out_dir, "pre_NBR.png")
-    download_png(pre.select("NBR"), aoi, vp["NBR"], outs["pre_nbr_png"], dimensions=1280)
+    download_png(pre.select("NBR"), aoi, vp["NBR"], outs["pre_nbr_png"], dimensions=2560)
 
     outs["post_nbr_png"] = os.path.join(out_dir, "post_NBR.png")
-    download_png(post.select("NBR"), aoi, vp["NBR"], outs["post_nbr_png"], dimensions=1280)
+    download_png(post.select("NBR"), aoi, vp["NBR"], outs["post_nbr_png"], dimensions=2560)
 
     outs["dndvi_png"] = os.path.join(out_dir, "dNDVI.png")
-    download_png(diffs["dNDVI"], aoi, vp["dNDVI"], outs["dndvi_png"], dimensions=1280)
+    download_png(diffs["dNDVI"], aoi, vp["dNDVI"], outs["dndvi_png"], dimensions=2560)
 
     outs["dnbr_png"] = os.path.join(out_dir, "dNBR.png")
-    download_png(diffs["dNBR"], aoi, vp["dNBR"], outs["dnbr_png"], dimensions=1280)
+    download_png(diffs["dNBR"], aoi, vp["dNBR"], outs["dnbr_png"], dimensions=2560)
 
     outs["severity_png"] = os.path.join(out_dir, "severity.png")
-    download_png(severity, aoi, vp["severity"], outs["severity_png"], dimensions=1280)
+    download_png(severity, aoi, vp["severity"], outs["severity_png"], dimensions=2560)
     return outs
 
 
 def export_truecolor_pngs(*, pre: ee.Image, post: ee.Image, aoi: ee.Geometry, out_dir: str = "results", min_val: int = 0, max_val: int = 3000, gamma: float = 1.2) -> Dict[str, str]:
-    """Export pre/post true color (B4,B3,B2) PNGs for reports."""
+    """Raporlar için öncesi/sonrası gerçek renkli (B4,B3,B2) PNG'leri dışa aktar."""
     ensure_dir(out_dir)
     vis_rgb = {"bands": ["B4", "B3", "B2"], "min": min_val, "max": max_val, "gamma": [gamma, gamma, gamma]}
     outs: Dict[str, str] = {}
