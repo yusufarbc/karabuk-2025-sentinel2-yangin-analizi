@@ -14,10 +14,10 @@ venv/
 # Results and generated artifacts
 # Track only selected file types from results (PNG, CSV, small HTML if needed)
 results/*
-!results/*.png
-!results/*.csv
-# Uncomment if you also want HTML in Git, note: GitHub won’t render interactive JS
-!results/*.html
+!results/**/
+!results/**/*.png
+!results/**/*.csv
+!results/**/*.html
 
 # LaTeX build
 paper/*.aux
