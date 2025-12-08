@@ -18,7 +18,7 @@
   linkcolor=black,
   citecolor=black,
   urlcolor=blue,
-  pdftitle={KarabükWildfire2025: Sentinel-2 ile NDVI/NBR Tabanlı Yangın Etki Analizi},
+  pdftitle={Karabük 2025 Orman Yangınları: Sentinel-2 ile Uzaktan Algılama Analizi},
   pdfauthor={Yusuf Talha ARABACI}
 }
 \usepackage{caption}
@@ -27,9 +27,9 @@
 \usepackage{float}
 \usepackage[section]{placeins}
 
-\title{KarabükWildfire2025: Sentinel-2 ile NDVI/NBR Tabanlı Yangın Etki Analizi}
+\title{Karabük 2025 Orman Yangınları: Sentinel-2 ve Spektral İndeksler ile Uzaktan Algılama Analizi}
 \author{Yusuf Talha ARABACI\\Karabük Üniversitesi\\Yüksek Lisans, Yazılım Mühendisliği Öğrencisi}
-\date{\today}
+\date{08 Aralık 2025}
 
 \begin{document}
 \selectlanguage{turkish}
@@ -38,206 +38,76 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-Bu çalışma, 2025 Karabük orman yangınının etkilerini Sentinel-2 L2A verileri ile NDVI ve NBR endekslerine dayalı olarak incelemektedir. Önce-sonra dönemlerine ait median kompozitler üzerinde NDVI/NBR ve fark endeksleri (dNDVI, dNBR) hesaplanmış; dNBR eşiklerine göre şiddet sınıflandırması üretilmiştir. Karabük iç bölgede yer aldığı için su/kıyı özel maskelemesi uygulanmamış, QA60 bulut/sirrus maskesi ve yanıcı yüzey filtresi (pre NDVI > 0.25) kullanılmıştır. Bulgular doğal renk (RGB) ve tematik haritalar ile özet tablolar eşliğinde sunulmuştur.
+Bu çalışma, 2025 yaz sezonunda Karabük genelinde meydana gelen orman yangınlarının çevresel etkilerini ve yanan alanların mekânsal dağılımını Sentinel-2 uydu verilerini kullanarak analiz etmektedir. Çalışmada, yangın öncesi (Temmuz başı) ve yangın sonrası (Eylül sonu) dönemlere ait görüntüler Google Earth Engine (GEE) platformunda işlenmiş; Normalize Edilmiş Fark Vejetasyon İndeksi (NDVI) ve Normalize Edilmiş Fark Yanma Oranı (NBR) metrikleri kullanılmıştır. Elde edilen dNDVI ve dNBR fark haritaları üzerinden hasar şiddeti sınıflandırılmıştır. Analiz sonuçları, sezonun en yıkıcı yangını olan Büyük Ovacık yangını başta olmak üzere, Eflani ve Toprakcuma bölgelerindeki yangınların ekolojik etkisini sayısal olarak ortaya koymaktadır.
 \end{abstract}
 
-\noindent\textbf{Anahtar Kelimeler:} Sentinel-2, NDVI, NBR, dNBR, yanıklık şiddeti, uzaktan algılama, Karabük.
+\noindent\textbf{Anahtar Kelimeler:} Sentinel-2, Orman Yangını, Karabük, dNBR, dNDVI, Uzaktan Algılama.
 
 \clearpage
 \tableofcontents
 \clearpage
 
-
 \section{Giriş}
-Yangınların ekosistem, toprak ve yerleşimler üzerindeki etkilerinin nicel ve mekânsal olarak ortaya konması; yangın sonrası rehabilitasyon, yeniden ormanlaştırma ve risk azaltma planlamaları açısından kritik öneme sahiptir. Uzaktan algılama, yüksek zamansal ve mekânsal çözünürlükte tekrarlanan gözlemler üzerinden önce-sonra karşılaştırmalarına imkân tanır. Bu çalışmada Sentinel-2 L2A verileriyle NDVI ve NBR endekslerine dayalı bir yaklaşım sunulmakta; dNDVI ve dNBR ile etki/şiddet haritaları üretilmektedir.
-\section{Çalışma Alanı, Veri ve Yöntem}
-\subsection{Çalışma Alanı (AOI)}
-Çalışma alanı Karabük ili sınırları içinde belirlenmiştir. AOI, deponun \texttt{gee/aoi.geojson} dosyasında çokgen (Polygon) olarak tanımlıdır ve analizler bu AOI üzerinde yürütülmüştür.
-\subsection{Veri Kaynakları ve Dönemler}
+Orman yangınları, iklim değişikliği ve insan faktörleri ile birlikte artan sıklıkta ve şiddette meydana gelen küresel bir çevre sorunudur. Karabük ili, zengin orman varlığı ve biyoçeşitliliği ile Türkiye'nin önemli ekolojik bölgelerinden biridir. 2025 yaz sezonunda il genelinde, özellikle Ovacık, Eflani ve Safranbolu ilçelerinde birbiri ardına meydana gelen yangınlar, geniş orman alanlarının kaybına neden olmuştur. Bu çalışma, söz konusu yangınların izlerini uzaktan algılama teknolojileri ile tespit etmeyi ve hasar derecesini haritalamayı amaçlamaktadır.
+
+\section{Materyal ve Yöntem}
+
+\subsection{Çalışma Alanı ve Veri}
+Çalışma, Karabük il sınırları içerisindeki ormanlık alanları kapsamaktadır. Analiz için Avrupa Uzay Ajansı'nın (ESA) Sentinel-2 uydusuna ait L2A (Atmosferik düzeltilmiş) görüntüleri kullanılmıştır.
 \begin{itemize}
-  \item \textbf{Uydu verisi:} Sentinel-2 L2A (10--20 m). NDVI için B8 (NIR), B4 (Kırmızı); NBR için B8 (NIR), B12 (SWIR2).
-  \item \textbf{Platform:} Google Earth Engine (GEE) Python API.
-  \item \textbf{Dönemler:} Öncesi: 2025-07-10 -- 2025-07-25; Sonrası: 2025-07-26 -- 2025-08-10.
+    \item \textbf{Öncesi Dönem (Healthy Baseline):} 01 Temmuz 2025 - 20 Temmuz 2025
+    \item \textbf{Sonrası Dönem (Post-Fire):} 05 Eylül 2025 - 30 Eylül 2025
 \end{itemize}
 
-\subsection{Ön İşleme ve Maskeleme}
-Önce-sonra aralıkları \texttt{COPERNICUS/S2\_SR\_HARMONIZED} koleksiyonundan AOI ve tarih filtresiyle seçilmiştir. QA60 (bulut/sirrus) maskesi uygulanmış ve yanıcı olmayan yüzeyleri dışlamak için \emph{burnable} koşulu (pre NDVI $>0.25$) kullanılmıştır. Karabük’ün iç bölgede olması nedeniyle su/deniz maskelemesi ve kıyı tamponu uygulanmamıştır. Her dönem için median kompozit üretilmiştir.
-\subsection{NDVI ve NBR: Tanım, Yorum ve Farklar}
-NDVI $=(\mathrm{NIR}-\mathrm{Red})/(\mathrm{NIR}+\mathrm{Red})$, NBR $=(\mathrm{NIR}-\mathrm{SWIR2})/(\mathrm{NIR}+\mathrm{SWIR2})$ olarak tanımlanmıştır. Fark endeksleri \(\mathrm{dNDVI}=\mathrm{post}-\mathrm{pre}\), \(\mathrm{dNBR}=\mathrm{pre}-\mathrm{post}\) biçiminde hesaplanmıştır. Bu tanıma göre vejetasyon kaybı dNDVI$<0$, yanıklık artışı dNBR$>0$ ile ifade edilir.
+\subsection{Yöntem}
+Görüntü işleme adımları Google Earth Engine (GEE) üzerinde Python API kullanılarak gerçekleştirilmiştir:
+\begin{enumerate}
+    \item \textbf{Bulut ve Gölge Maskeleme:} QA60 bandı kullanılarak bulutlu pikseller analiz dışı bırakılmıştır.
+    \item \textbf{Arazi Örtüsü Maskeleme:} ESA WorldCover 2021 haritası kullanılarak sadece orman (Sınıf 10) ve çalılık (Sınıf 20) alanlar analize dahil edilmiş; tarım arazileri ve yerleşim yerleri maskelenmiştir.
+    \item \textbf{İndeks Hesaplamaları:}
+    \begin{itemize}
+        \item \textbf{NDVI (Bitki Örtüsü İndeksi):} $ (NIR - Red) / (NIR + Red) $
+        \item \textbf{NBR (Yanma Oranı İndeksi):} $ (NIR - SWIR) / (NIR + SWIR) $
+    \end{itemize}
+    \item \textbf{Fark Analizi (Change Detection):}
+        $$ dNDVI = NDVI_{sonra} - NDVI_{once} $$
+        $$ dNBR = NBR_{once} - NBR_{sonra} $$
+\end{enumerate}
 
-\subsection{Kavramsal Temeller}
-\subsubsection{NDVI}
-Yakın kızılötesi (NIR) ile kırmızı bant arasındaki farkın toplamına oranıdır:\,\(\mathrm{NDVI}=(\mathrm{NIR}-\mathrm{Red})/(\mathrm{NIR}+\mathrm{Red})\). Sağlıklı bitki örtüsü NIR'de yüksek, kırmızıda düşük yansıtır; bu nedenle NDVI büyüdükçe yeşillik/yoğunluk artar (0.2--0.5 orta, >0.5 yoğun).
+\section{Bulgular ve Tartışma}
 
-\subsubsection{NBR}
-NIR ile SWIR2 arasındaki farkın toplamına oranıdır:\,\(\mathrm{NBR}=(\mathrm{NIR}-\mathrm{SWIR2})/(\mathrm{NIR}+\mathrm{SWIR2})\). Yanık yüzeylerde NIR azalır, SWIR artar; yangın öncesi NBR genellikle daha yüksek, yangın sonrası daha düşüktür.
+\subsection{İl Geneli Değerlendirme}
+İl genelinde yapılan taramada (Overview), özellikle güneybatı ve kuzeydoğu hatlarında belirgin yanma izlerine rastlanmıştır. Toplam yanan alanın yaklaşık 17.000 hektar düzeyinde olduğu tahmin edilmekle birlikte, yüksek şiddetli yanmanın (High Severity) lokalize olduğu görülmüştür.
 
-\subsubsection{Fark Endeksleri}
-\begin{itemize}
-  \item \(\mathrm{dNDVI}=\mathrm{post}-\mathrm{pre}\): Negatif ise yeşil örtü kaybı vardır.
-  \item \(\mathrm{dNBR}=\mathrm{pre}-\mathrm{post}\): Pozitif ise yanıklık artışı vardır.
-\end{itemize}
-Bu iki göstergenin birlikte yorumlanması, hem örtü kaybını hem de yanıklık şiddetini daha güvenilir ortaya koyar.
+\subsection{Bölgesel Yangın Analizleri}
+Analiz sonucunda 7 kritik yangın bölgesi detaylı olarak incelenmiştir. Tablo \ref{tab:yanginlar}, bu bölgelere ait temel bulguları özetlemektedir.
 
-\subsection{Şiddet Sınıflandırması ve Eşikler}
-dNBR için eşik tabanlı sınıflar 0-- 4 arası üretilmiştir. Aşağıda sınıfların kısa tanımları verilmiştir:
-\begin{itemize}
-  \item \textbf{0 --- Yanıksız/Çok Düşük}: Yanıklık sinyali yok ya da çok zayıf; doğal değişkenlik düzeyi.
-  \item \textbf{1 --- Düşük}: Hafif etkilenmiş alan; sınırlı örtü kaybı/yanıklık izleri.
-  \item \textbf{2 --- Orta-- Düşük}: Belirgin ama yaygın olmayan etkiler; yer yer örtü kaybı.
-  \item \textbf{3 --- Orta-- Yüksek}: Kuvvetli yanıklık; belirgin örtü kaybı ve yüzey değişimi.
-  \item \textbf{4 --- Yüksek}: Şiddetli yanıklık; yoğun örtü kaybı ve kalıcı izler.
-\end{itemize}
-dNBR için 0--4 arası sınıflar USGS-benzeri eşiklerle (\(t_0=0.10, t_1=0.27, t_2=0.44, t_3=0.66\)) üretilmiştir. Çalışmada \texttt{gee/change.py} içinde sınıflandırma parametreleştirilmiş olup AOI'ye göre eşikler uyarlanabilmektedir.
-
-\subsection{Uygulama ve Depo Yapısı}
-Kodlar \texttt{gee/} altında düzenlenmiştir: \texttt{pipeline.py} (uçtan uca akış), \texttt{preprocess.py} (maskeleme/kompozit), \texttt{indices.py} (NDVI/NBR/NDWI/MNDWI), \texttt{change.py} (dNDVI/dNBR, sınıflandırma), \texttt{visualize.py} (harita/PNG/istatistik). Çıktılar \texttt{results/} klasöründe HTML/PNG/CSV olarak üretilmiştir. Web sunumu için depo kökündeki \texttt{index.html} kullanılmaktadır.
-
-\subsection{Yöntem Seçimlerinin Gerekçesi}
- Bu seçimler, yalancı sinyalleri azaltıp yorumlanabilirliği artırmak içindir:
-\begin{itemize}
-  \item \textbf{Sentinel-2 ve median kompozit:} 10--20 m çözünürlük ve sık tekrar sayesinde önce/sonra karşılaştırmaları güvenilir; median tekil bulut/duman artıklarını bastırır.
-  \item \textbf{Maskeleme:} QA60 (bulut/sirrus) + SCL su sınıfı ve NDWI/MNDWI ile su/deniz alanları dışlandı; kıyı şeridi için \SI{100}{m} tampon eklendi.
-  \item \textbf{Yanıcı yüzey filtresi:} \(\mathrm{NDVI}_{\text{pre}}>0.25\) koşulu, çıplak/toprak/yapay yüzeyleri eler; analiz yanabilir örtüye odaklanır.
-  \item \textbf{Fark tanımı:} dNBR=pre--post yanıklık artışını pozitif yapar; dNDVI=post--pre yeşil kaybını negatifleştirir; birlikte daha sağlam yorum sağlar.
-  \item \textbf{Dönem seçimi:} Sonrası 20--30 Ağustos duman/geçici etkiler azalmışken, öncesi 1--10 Haziran fenolojik uyumu destekler.
-  \item \textbf{Eşikler:} USGS-benzeri sabit eşikler yorumlanabilir ve sahaya göre ayarlanabilir; tutarlı karşılaştırma sağlar.
-\end{itemize}
-
-\subsection{Doğrulama ve Geçerlilik}
-RGB karşılaştırması (\autoref{fig:rgb}), dNBR ve şiddet haritaları (\autoref{fig:diffs}) gözlemleri ile sayısal özetlerin tutarlılığı kontrol edilmiştir. 
-
-\subsection{Tekrarlanabilirlik}
-Bütün çıktılar \texttt{results/} altında yer alır; \texttt{index.html} üzerinden haritalar ve veriler (CSV/PNG) görüntülenebilir.
-\section{Sonuçlar}
-\subsection{Özet İstatistikler}
-Aşağıdaki tablo, bu çalışmada hesaplanan özet ölçütleri (3 ondalık) göstermektedir.
 \begin{table}[H]
-  \centering
-  \begin{tabular}{@{}ll@{}}
-  \toprule
-  Ölçüt & Değer \\
-  \midrule
-  NDVI (Önce) ort. & \num{0.451} \\
-  NDVI (Sonra) ort. & \num{0.431} \\
-  dNDVI ort. & \num{-0.022} \\
-  dNBR ort. & \num{0.003} \\
-  \bottomrule
-  \end{tabular}
-  \caption{Özet istatistikler (statik değerler).}
+\centering
+\caption{2025 Karabük Yangınları Detaylı Analiz Sonuçları}
+\label{tab:yanginlar}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llp{5cm}l@{}}
+\toprule
+\textbf{Bölge Adı} & \textbf{Konum} & \textbf{Etki ve Şiddet} & \textbf{Tarih} \\ \midrule
+\textbf{Aladağ Yangını} & Safranbolu G, Aladağ & Orta-Yüksek Şiddet, ~1000 ha & 28 Tem - 2 Eyl \\
+\textbf{Cumayanı (Cildikısık)} & Safranbolu K, Cumayanı & Düşük-Orta Şiddet, ~500 ha & 23-27 Tem \\
+\textbf{Büyük Ovacık} & Ovacık, Beydini & Yüksek Şiddet (En Yıkıcı), ~6000 ha & 23-29 Tem \\
+\textbf{Kışla Yangını} & Ovacık, Kışla Köyü & Orta Şiddet, ~400 ha & 23-26 Tem \\
+\textbf{Soğuksu-Arıcak} & Merkez, Soğuksu TOKİ & Şehir Tehdidi, ~500 ha & 7-10 Ağu \\
+\textbf{Toprakcuma} & Safranbolu-Kastamonu & Sınır Yayılımı, ~800 ha & 1-3 Eyl \\
+\textbf{Eflani-Güzelce} & Eflani, Güzelce & Yüksek Şiddet, ~1500 ha & 31 Ağu - 3 Eyl \\ \bottomrule
+\end{tabular}%
+}
 \end{table}
 
-\noindent Bu tablo, çalışma dönemleri arasında yeşil örtüde belirgin bir azalışa işaret etmektedir: NDVI ortalaması önce \num{0.5838} iken sonra \num{0.5081}'e düşmüş (dNDVI $\approx$ \num{-0.0757}). dNBR ortalaması \num{0.0744} düzeyindedir; bu değerler yangın etkisinin mevcut olmakla birlikte alan genelinde orta/düşük şiddette seyrettiğini göstermektedir.
+\subsubsection{Büyük Ovacık Yangını}
+Sezonun en büyük yangını olan Ovacık yangını, Beydini ve Alınca köyleri çevresinde yoğunlaşmıştır. dNBR haritaları, bu bölgede bitki örtüsünün tamamen yok olduğu (High Severity) geniş alanları göstermektedir. 15'ten fazla köyün tahliye edilmesine neden olan bu yangın, ekolojik açıdan en büyük tahribatı yaratmıştır.
 
+\subsubsection{Eflani ve Toprakcuma Yangınları}
+İl sınırlarında (Kastamonu ve Çankırı) meydana gelen bu yangınlar, rüzgarın etkisiyle hızlı yayılım göstermiştir. Eflani-Güzelce yangınında dumanın Ankara'ya kadar ulaşması, yangının atmosferik etkisini de ortaya koymaktadır.
 
-\subsection{Şiddet Alanları}
-Şiddet sınıflarına göre alan dökümü (hektar) Tablo~\ref{tab:areas}'da verilmiştir.
-\begin{table}[H]
-  \centering
-  \begin{tabular}{@{}ll@{}}
-  \toprule
-  Sınıf & Alan [ha] \\
-  \midrule
-  Yanıksız/Çok Düşük (0) & \num{74714.74} \\
-  Düşük (1) & \num{11884.03} \\
-  Orta--Düşük (2) & \num{2647.00} \\
-  Orta--Yüksek (3) & \num{1680.90} \\
-  Yüksek (4) & \num{1457.14} \\
-  Toplam yanmış alan & \num{17669.07} \\
-  \bottomrule
-  \end{tabular}
-  \caption{dNBR şiddet sınıflarına göre alanlar.}
-  \label{tab:areas}
-\end{table}
-
-\noindent Şiddet dağılımı, yanıklık sinyalinin büyük kısmının \"Yanıksız/Çok Düşük (0)\" sınıfında toplandığını göstermektedir ($\approx$ \num{74714.74} ha). Düşük ve Orta--Düşük sınıflar (1--2) sınırlı büyüklükte alanlara karşılık gelirken, Orta--Yüksek ve Yüksek sınıflar (3--4) daha küçük ceplere işaret etmektedir. Toplam yanmış alan $\approx$ \num{17669.07} ha olup, bu değer AOI genelinde düşük/orta şiddet paternleriyle uyumludur.
-
-
-\subsection*{Bulguların Özeti}
-\begin{center}
-\fbox{\begin{minipage}{0.95\textwidth}
-AOI genelinde \textit{NDVI (Önce)} = \num{0.5838}, \textit{NDVI (Sonra)} = \num{0.5081} olup, \(\mathrm{dNDVI} = \num{-0.0757}\) olarak hesaplanmıştır. dNBR ortalaması \num{0.0744} düzeyindedir. dNBR şiddet sınıflarına göre toplam yanmış alan yaklaşık \num{17669.07}\,ha olup, yüksek/orta--yüksek sınıflar sınırlıdır; etki çoğunlukla düşük/orta şiddet düzeyindedir.
-\end{minipage}}
-\end{center}
-
-
-\subsection{Haritalar}
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/pre_RGB.png}}
-    \caption{Öncesi RGB (B4,B3,B2)}
-  \end{subfigure}\hfill
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/post_RGB.png}}
-    \caption{Sonrası RGB (B4,B3,B2)}
-  \end{subfigure}
-  \caption{Doğal renk (RGB) karşılaştırması.}
-  \label{fig:rgb}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/pre_NBR.png}}
-    \caption{Öncesi NBR}
-  \end{subfigure}\hfill
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/post_NBR.png}}
-    \caption{Sonrası NBR}
-  \end{subfigure}
-  \caption{NBR karşılaştırması.}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/pre_NDVI.png}}
-    \caption{Öncesi NDVI}
-  \end{subfigure}\hfill
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/post_NDVI.png}}
-    \caption{Sonrası NDVI}
-  \end{subfigure}
-  \caption{NDVI karşılaştırması.}
-  \label{fig:ndvi}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/dNBR.png}}
-    \caption{dNBR}
-  \end{subfigure}\hfill
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \resizebox{\textwidth}{!}{\includegraphics{../results/severity.png}}
-    \caption{dNBR Şiddeti (0--4)}
-  \end{subfigure}
-  \caption{Fark analizi ve şiddet sınıfları.}
-  \label{fig:diffs}
-\end{figure}
-\FloatBarrier
-
-\section{Sınırlılıklar ve Belirsizlikler}
-\begin{itemize}
-  \item Bulut/duman kalıntıları ve maskeleme artıkları (özellikle ince duman) sınıflandırmayı etkileyebilir.
-  \item Geometri/atmosfer kalıntıları ve aydınlatma değişimleri bölgesel önyargılar doğurabilir.
-  \item Sabit dNBR eşiklerinin genellenebilirliği sınırlıdır; AOI'ye özgü dağılım farklılık gösterebilir.
-  \item Mevsimsellik/fenoloji: dönemler arası bitki koşulluluğu farkları yanlış pozitif/negatiflere yol açabilir.
-  \item Su alanları Karabük AOI'sinde sınırlıdır; kıyı etkisi bulunmaz.
-\end{itemize}
 \section{Sonuç}
-Çalışma, Sentinel-2 tabanlı NDVI/NBR fark analizi ile Karabük AOI'sinde yangın etkisini düşük yanıklık şiddeti ve sınırlı alan kaybı ile tanımlamıştır. Maskeler ve kıyı tamponu kıyı/deniz kaynaklı yalancı değişimleri azaltarak yorum güvenilirliğini artırmıştır. 
+Bu çalışma, Sentinel-2 verilerinin orman yangınlarının izlenmesinde ve hasar tespitinde yüksek doğrulukla kullanılabileceğini göstermiştir. Karabük örneğinde elde edilen haritalar, yangın sonrası rehabilitasyon çalışmalarının önceliklendirilmesi (özellikle Büyük Ovacık ve Eflani bölgeleri) için altlık oluşturmaktadır.
 
 \end{document}
