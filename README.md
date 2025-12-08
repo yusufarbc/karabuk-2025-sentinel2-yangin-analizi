@@ -1,107 +1,84 @@
-# karabuk-2025-sentinel2-yangin-analizi
+# 🌲 Karabük 2025 Orman Yangınları Uzaktan Algılama Analizi
 
-2025 Karabük orman yangınının Sentinel-2 uydu görüntüleriyle yanma şiddeti (dNBR) ve bitki örtüsü kaybı analizi.
+> **Sentinel-2 Uydu Görüntüleri ve Google Earth Engine ile Hasar Tespit Raporu**
 
-## Canlı Demo ve Sonuçlar
-
-Interaktif haritalar ve çıktı listesi:
-
-➡️ [GitHub Pages — Proje Sonuçları](https://yusufarbc.github.io/KarabukWildfire2025/)
-
-Yerelde görüntüleme: Depo kökündeki `index.html` dosyasını tarayıcıda açın (tüm haritalar ve CSV/PNG bağlantıları `results/` altına işaret eder).
+Bu proje, 2025 yaz sezonunda Karabük ilinde (özellikle Ovacık, Eflani ve Safranbolu bölgelerinde) meydana gelen orman yangınlarının çevresel etkilerini bilimsel yöntemlerle analiz etmek amacıyla geliştirilmiştir.
 
 ---
 
-## Proje Yapısı
+## 🌐 Canlı Demo ve Rapor
 
-| Klasör/Dosya | Açıklama |
+Projenin interaktif haritalarını ve detaylı analiz sonuçlarını web üzerinden inceleyebilirsiniz:
+
+### [🚀 Analiz Platformunu Görüntüle](https://yusufarbc.github.io/karabuk-2025-sentinel2-yangin-analizi/)
+
+---
+
+## 🔍 Proje Hakkında
+
+İklim değişikliğinin bir sonucu olarak 2025 yılında artan sıcaklıklar, Karabük ormanlarında ciddi yangınlara yol açmıştır. Bu çalışma, **Sentinel-2** uydusunun yüksek çözünürlüklü optik verilerini kullanarak yangın öncesi ve sonrası durumu karşılaştırmalı olarak sunar.
+
+### Uygulanan Bilimsel Metodoloji
+*   **dNDVI (Vejetasyon Fark İndeksi):** Bitki örtüsündeki yeşillik kaybını ve klorofil değişimini modeller.
+*   **dNBR (Yanmışlık Oranı Farkı):** USGS standartlarına göre yanma şiddetini (Düşük, Orta, Yüksek) sınıflandırır.
+*   **Maskeleme:** ESA WorldCover verisi kullanılarak tarım arazileri ve yerleşim yerleri analizden çıkarılmış, sadece ormanlık alanlara odaklanılmıştır.
+
+Analizler, **Google Earth Engine (GEE)** Python API kullanılarak bulut tabanlı olarak gerçekleştirilmiş ve sonuçlar **QGIS** ortamında doğrulanmıştır.
+
+---
+
+## 📂 Proje Yapısı
+
+| Klasör | İçerik ve Açıklama |
 | :--- | :--- |
-| `gee/` | Analiz kodları: `pipeline.py` (uçtan uca akış), `preprocess.py`, `indices.py`, `change.py` (dNBR sınıfları), `visualize.py`, `utils.py`, `aoi.py` ve `aoi.geojson`. |
-| `results/` | Üretilen haritalar (HTML/PNG) ve özet istatistikler (`summary_stats.csv`, `severity_areas.csv`). |
-| `paper/` | LaTeX raporu (`paper/main.tex`). |
-| `analysis.ipynb` | Jupyter defteri; adım adım analiz ve görselleştirme. |
-| `index.html` | Web sonuç sayfası (kart tabanlı, responsive). |
-| `requirements.txt` | Gerekli Python kütüphaneleri (yoksa aşağıdaki listeyi kullanın). |
+| `gee/` | **Analiz Motoru:** GEE pipeline kodları, indeks hesaplamaları ve görüntü işleme scriptleri. |
+| `results/` | **Çıktılar:** Her bölge için üretilen HTML haritalar, PNG görseller ve CSV istatistikleri. |
+| `paper/` | **Akademik Rapor:** LaTeX formatında yazılmış bilimsel makale ve derlenmiş PDF. |
+| `analysis.ipynb` | **Jupyter Notebook:** Adım adım analiz sürecini çalıştıran ana defter. |
+| `index.html` | **Web Arayüzü:** Sonuçların sunulduğu modern, responsive web sayfası. |
 
-## Kurulum
+---
 
-Önkoşul: Google Earth Engine (GEE) API erişimi.
+## ⚡ Kurulum ve Kullanım
 
-1) Sanal ortam ve bağımlılıklar
+Bu projeyi yerel ortamınızda çalıştırmak ve analizleri tekrar etmek için aşağıdaki adımları izleyin.
+
+### Önkoşullar
+*   Python 3.8+
+*   Google Earth Engine hesabı
+
+### 1. Kurulum
 
 ```bash
-python -m venv .venv
-# Linux/macOS
-source .venv/bin/activate
-# Windows
-.\.venv\Scripts\activate
+# Projeyi klonlayın
+git clone https://github.com/yusufarbc/karabuk-2025-sentinel2-yangin-analizi.git
 
-# Eğer `requirements.txt` yoksa aşağıdakileri kurun:
-pip install earthengine-api folium branca requests pandas
-# (opsiyonel ama tavsiye: jupyter)
-pip install jupyter
+# Sanal ortam oluşturun (Önerilen)
+python -m venv .venv
+
+# Paketleri yükleyin
+pip install -r requirements.txt
 ```
 
-2) Earth Engine kimlik doğrulama
-
+### 2. Kimlik Doğrulama
+Google Earth Engine API'sini projenizde kullanabilmek için yetkilendirme yapın:
 ```bash
 earthengine authenticate
 ```
 
-## Çalıştırma
-
-İki tip kullanım desteklenir: Jupyter defteri veya doğrudan Python çağrısı.
-
-1) Jupyter Notebook (önerilen)
-
+### 3. Analizi Çalıştırma
+Analiz sürecini başlatmak için Jupyter Notebook'u kullanabilirsiniz:
 ```bash
 jupyter notebook analysis.ipynb
 ```
+Alternatif olarak, `.py` scriptleri üzerinden doğrudan işlem yapabilirsiniz.
 
-2) Python ile doğrudan çalıştırma (örnek)
+---
 
-```python
-from gee.utils import ee_init
-from gee.pipeline import run_pipeline
+## 📝 Lisans
 
-ee_init(project="karabukwildfire2025")  # Proje ID'nizi kullanın
+Bu proje **MIT Lisansı** ile lisanslanmıştır. Açık kaynaklıdır ve eğitim/araştırma amaçlı özgürce kullanılabilir.
 
-outputs = run_pipeline(
-    pre_start="2025-07-10", pre_end="2025-07-25",
-    post_start="2025-07-26", post_end="2025-08-10",
-    aoi_geojson="gee/aoi.geojson",
-    out_dir="results",
-    # Opsiyonel: AOI'ye göre dNBR eşiklerini özelleştir
-    dnbr_thresholds=(0.10, 0.27, 0.44, 0.66),
-    # Opsiyonel: minimum yama alanı (hektar)
-    min_patch_ha=0.5,
-)
+---
 
-print(outputs)
-```
-
-Başarılı çalıştırma sonrası `results/` klasöründe interaktif haritalar (HTML) ve statik görseller (PNG) oluşur. Hızlı göz atmak için depo kökündeki `index.html` sayfasını açın.
-
-Not: Bu çalışmada öncesi (pre) 10–25 Temmuz, sonrası (post) 26 Temmuz–10 Ağustos aralığı baz alınmıştır.
-
-## Rapor (LaTeX)
-
-`paper/main.tex` derlemek için:
-
-```bash
-cd paper
-pdflatex -interaction=nonstopmode -halt-on-error main.tex
-```
-
-Notlar:
-- pdfLaTeX (LaTeX motoru) kullanılmalıdır; `pdftex`/`tex` (plain) ile derlemeyin.
-- Yardımcı dosyalar `.gitignore` ile hariç tutulur; raporu yerelde derleyin.
-## Dokümantasyon
-
-Detaylı teknik bilgi ve kullanım kılavuzları `docs/` klasöründedir:
-*   [📄 Metodoloji ve Teknik Yaklaşım](docs/metodoloji.md): Kullanılan indeksler, USGS standartları ve gürültü temizleme algoritmaları.
-*   [📊 Sonuçların Yorumlanması](docs/sonuclar.md): Harita türleri, renk kodları ve özel rapor görselleri hakkında rehber.
-
-## Lisans
-
-Bu proje MIT lisansı altındadır. Ayrıntılar için `LICENSE` dosyasına bakınız.
+*Yusuf Talha ARABACI - Karabük Üniversitesi*
