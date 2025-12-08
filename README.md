@@ -1,4 +1,4 @@
-# 🌲 Karabük 2025 Orman Yangınları Uzaktan Algılama Analizi
+# Karabük 2025 Orman Yangınları Uzaktan Algılama Analizi
 
 > **Sentinel-2 Uydu Görüntüleri ve Google Earth Engine ile Hasar Tespit Raporu**
 
