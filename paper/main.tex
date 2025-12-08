@@ -74,7 +74,7 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-Bu rapor, 2025 yaz sezonunda Karabük ilinde meydana gelen orman yangınlarının çevresel etkilerini, yanan alanların büyüklüğünü ve hasar derecesini bilimsel yöntemlerle ortaya koymaktadır. Analiz, Sentinel-2 uydu görüntüleri ve Google Earth Engine (GEE) platformu kullanılarak gerçekleştirilmiştir. Çalışmada 1-20 Temmuz 2025 (Yangın Öncesi) ve 5-30 Eylül 2025 (Yangın Sonrası) tarihleri arasındaki görüntüler kullanılarak dNDVI ve dNBR fark indeksleri üretilmiştir. Vejetasyon kaybı ve yanmışlık şiddeti haritaları üzerinden il genelindeki 7 kritik yangın bölgesi detaylı olarak incelenmiştir.
+2025 yaz sezonunda Karabük genelinde meydana gelen orman yangınlarının mekansal dağılımı ve ekolojik tahribatı, uzaktan algılama teknikleriyle incelenmiştir. Sentinel-2 uydu verileri ve Google Earth Engine platformu kullanılarak, 1-20 Temmuz (Yangın Öncesi) ve 5-30 Eylül (Yangın Sonrası) dönemleri arasındaki değişim, dNDVI ve dNBR indisleri üzerinden modellenmiştir. Uydudan elde edilen bulgular, il genelindeki 7 kritik bölgede vejetasyon kaybını somutlaştırırken, yanmışlık şiddetinin mekansal varyasyonunu ortaya koymaktadır.
 \end{abstract}
 
 % FIX: [H] placement, removed clearpage, maximized size
@@ -88,31 +88,18 @@ Bu rapor, 2025 yaz sezonunda Karabük ilinde meydana gelen orman yangınlarını
 \clearpage
 
 \section{Giriş}
-Orman yangınları, iklim değişikliğinin etkisiyle artan sıcaklık dalgaları, uzun süreli kuraklık ve insan kaynaklı faktörlerin birleşimiyle hem sıklık hem de şiddet açısından küresel boyutta tehdit oluşturmaktadır. Karabük ili, Batı Karadeniz Bölgesi'nin en yüksek orman örtüsüne sahip illerinden biri olup, yaklaşık \%65 oranında ormanlık alanla zengin biyoçeşitliliğe ev sahipliği yapmaktadır. 2025 yaz sezonunda, özellikle Temmuz-Ağustos döneminde aşırı sıcaklar ve kuvvetli rüzgârların etkisiyle meydana gelen yangınlar, il genelinde 36 ayrı olayda toplam 6.865,6 hektar orman alanının zarar görmesine yol açmıştır. Bu çalışma, Sentinel-2 uydu verileriyle yapılan uzaktan algılama analiziyle yangınların spatial boyutunu, şiddet sınıflarını ve rehabilitasyon önceliklerini bilimsel olarak belgelemeyi amaçlamaktadır.
+İklim değişikliğine bağlı sıcaklık artışları ve hidrolojik stres, küresel orman yangını rejimlerini değiştirerek yangın mevsimlerini uzatmaktadır. Batı Karadeniz Bölgesi'nin biyolojik rezervlerinden biri olan ve yüzölçümünün \%65'ini ormanların oluşturduğu Karabük, 2025 sezonunda bu değişimin somut etkileriyle yüzleşmiştir. Özellikle Temmuz ve Ağustos aylarındaki atmosferik anomaliler, il genelinde geniş çaplı yangınları tetiklemiş; 36 farklı noktada yaklaşık 6.865 hektar alan ekolojik hasara uğramıştır. Bu çalışmanın temel motivasyonu, Sentinel-2 optik verileri aracılığıyla yangınların etki alanını haritalamak ve yanma şiddetini (burn severity) kantitatif olarak değerlendirmektir.
 
 \section{Materyal ve Yöntem}
-\subsection{Veri Kaynakları}
-Analiz, Karabük il sınırları içindeki ormanlık alanları kapsamaktadır. Avrupa Uzay Ajansı (ESA) Copernicus programı kapsamında Sentinel-2A/B uydularına ait Level-2A (atmosferik düzeltmeli) optik görüntüler kullanılmıştır.
-\begin{itemize}
-    \item \textbf{İşleme Platformu:} Google Earth Engine (GEE) Python API \& QGIS
-    \item \textbf{Yangın Öncesi Referans Dönem:} 01–20 Temmuz 2025 (bulutsuz mozaik)
-    \item \textbf{Yangın Sonrası Dönem:} 05–30 Eylül 2025 (bulutsuz mozaik)
-    \item \textbf{Yardımcı Veriler:} ESA WorldCover 2021 (10 m), Copernicus DEM 30 m
-\end{itemize}
+\subsection{Veri Kaynakları ve Metodoloji}
+Çalışma sahası olarak, yoğun orman örtüsü ve topoğrafik çeşitliliğe sahip Karabük il sınırı belirlenmiştir. Analizin temel veri setini, Avrupa Uzay Ajansı (ESA) Copernicus programı kapsamındaki Sentinel-2A/B uydularının atmosferik düzeltmesi yapılmış Level-2A görüntüleri oluşturur. Zamansal analiz için, yangın öncesi fenolojiyi temsilen 1--20 Temmuz 2025, yangın sonrası durumu temsilen ise 05--30 Eylül 2025 tarih aralıklarındaki minimal bulutluluk oranına sahip mozaikler esas alınmıştır. Veri işleme süreci Google Earth Engine (GEE) platformunda yürütülmüş, sonuçlar QGIS ortamında kartografik olarak düzenlenmiştir. ESA WorldCover 2021 (10 m) ve Copernicus DEM (30 m) veri setleri ise yardımcı katmanlar olarak kullanılmıştır.
 
-\subsection{Yöntem}
-Yangın hasarının yüksek doğrulukla tespit edilebilmesi için şu adımlar izlenmiştir:
-\begin{enumerate}
-    \item \textbf{Hassas Maskeleme:} ESA WorldCover 2021 verisiyle yalnızca ``Tree Cover'' (Class 10) ve ``Shrubland'' (Class 20) pikselleri analize dahil edilmiş; tarım arazileri, yerleşim yerleri ve hasat edilmiş alanların yanlış pozitif etkisi ortadan kaldırılmıştır.
-    \item \textbf{dNDVI ($\Delta$NDVI):} Yangın öncesi ve sonrası NDVI farkı hesaplanarak bitki örtüsü kaybı şiddeti belirlenmiştir ($-1$ ila $+1$ aralığı; $> 0,2$ yüksek kayıp).
-    \item \textbf{dNBR ($\Delta$NBR):} Normalize Edilmiş Yanma Oranı farkı ile yanma şiddeti sınıflandırılmıştır (USGS sınıflandırmasına göre: $0,1$--$0,27$ düşük, $0,27$--$0,44$ orta, $0,44$--$0,66$ yüksek, $>0,66$ çok yüksek şiddet).
-    \item \textbf{Doğruluk Değerlendirmesi:} OGM saha raporları ve yüksek çözünürlüklü drone görüntüleriyle karşılaştırma yapılmış, \%94–96 genel doğruluk elde edilmiştir.
-\end{enumerate}
+Metodolojik akışta, öncelikle ESA WorldCover verisi kullanılarak tarım arazileri ve şehirleşmiş alanlar maskelenmiş, böylece analiz yalnızca ``Tree Cover'' (Sınıf 10) ve ``Shrubland'' (Sınıf 20) piksellerine odaklanmıştır. Vejetasyon sağlığını izlemek adına Fark Normalize Edilmiş Vejetasyon İndeksi (dNDVI) hesaplanmış; $-1$ ile $+1$ aralığındaki değerler üzerinden klorofil kaybı modellenmiştir. Buna paralel olarak, Fark Normalize Edilmiş Yanma Oranı (dNBR) ile yangın şiddeti, USGS standartlarına uygun olarak (düşük, orta, yüksek şiddet) sınıflandırılmıştır. Elde edilen mekansal verilerin doğruluğu, Orman Genel Müdürlüğü (OGM) saha kayıtları ve yüksek çözünürlüklü drone görüntüleriyle çapraz kontrolden geçirilerek \%94--96 aralığında bir genel doğruluk oranına ulaşılmıştır.
 
 \clearpage
 
 \section{Bulgular: İl Geneli Analiz}
-İl genelinde yapılan taramada, yangın izleri özellikle güneybatı-kuzeydoğu ekseninde (Ovacık–Eflani hattı) yoğunlaşmıştır. Toplam etkilenen orman alanı 6.865,6 hektar olarak tespit edilmiş olup, bunun yaklaşık \%58’i yüksek-çok yüksek yanma şiddeti sınıfındadır.
+Uydu tabanlı analizler, yangın izlerinin Ovacık--Eflani hattı boyunca, hakim rüzgâr yönü olan güneybatı-kuzeydoğu ekseninde yoğunlaştığını göstermektedir. Toplam 6.865,6 hektarlık tahribat alanının yaklaşık \%58'lik kısmının ``yüksek'' ve ``çok yüksek'' yanma şiddeti sınıfına girmesi, yangınların tepe yangını karakteristiği taşıdığını ve biyokütle kaybının ciddiyetini ortaya koymaktadır.
 
 \begin{figure}[H]
     \centering
@@ -148,36 +135,36 @@ Yangın hasarının yüksek doğrulukla tespit edilebilmesi için şu adımlar i
 \clearpage
 
 \section{Bölgesel Yangın Analizleri}
-Yüksek çözünürlüklü Sentinel-2 uydu görüntüleri kullanılarak belirlenen 7 kritik bölge, 2025 yangın sezonunun Karabük ormanlarındaki etkilerini detaylı olarak ortaya koymuştur. Bu analizler, Anadolu Ajansı, BBC Türkçe ve Orman Genel Müdürlüğü gibi güvenilir kaynaklardan derlenen saha verileriyle desteklenerek zenginleştirilmiştir. Her bölgede, yangın başlangıç tarihleri, etkilenen alan büyüklükleri ve yerel etkiler, dNDVI (normalized difference vegetation index farkı) ve dNBR (normalized burn ratio farkı) indeksleri ile entegre edilmiştir.
+Yüksek çözünürlüklü Sentinel-2 görüntüleri üzerinden belirlenen 7 kritik bölge, yangın dinamiklerinin yerel topografya ve bitki örtüsüyle ilişkisini açıklamaktadır. Analizler, Anadolu Ajansı ve BBC Türkçe gibi kaynaklardan edinilen zaman damgalı veriler ve OGM saha raporlarıyla entegre edilmiştir. Aşağıdaki bölümlerde, her bir bölge için hesaplanan dNDVI (vejetasyon kaybı) ve dNBR (yanma şiddeti) metrikleri detaylandırılmıştır.
 \subsection{1. Çıldıkısık \& Kayı (Merkez)}
-Merkez ilçe güneyinde, Burunsuz ve Kayı köyleri arasındaki ormanlık alanda 22 Temmuz 2025 tarihinde saat 16:32'de başlayan yangın izleri, rüzgar etkisiyle hızla yayılmış ve yaklaşık 500 hektarlık bir alanı etkilemiştir. Yangın, karaçam ağırlıklı ormanlarda orta şiddette yanma yaratarak yerel tarım arazilerine sıçrama riski taşımış, ancak ekiplerin hızlı müdahalesiyle büyük ölçüde kontrol altına alınmıştır. Bu olay, iklim değişikliğinin tetiklediği erken sezon yangınlarının tipik bir örneğini yansıtmaktadır.
+Merkez ilçe güneyinde, Burunsuz ve Kayı köyleri arasındaki ormanlık alanda 22 Temmuz 2025 tarihinde (Saat 16:32) tespit edilen yangın anomalisi, rüzgârın da etkisiyle hızla yayılım göstererek yaklaşık 500 hektarlık bir alanda etkili olmuştur. Karaçam ağırlıklı vejetasyonun hakim olduğu bölgede, yangın orta şiddette seyretmekle birlikte tarım arazileri ile orman arayüzünde (wildland-urban interface) risk yaratmıştır. Müdahale süreçlerinin hızı, yanma şiddetinin belirli bölgelerde sınırlı kalmasını sağlamışsa da, erken sezon yangınlarının yayılım potansiyelini göstermesi açısından önemlidir.
 \firefig{figures/yanginlar/1_Cildikisik_Kayi}{Çıldıkısık \& Kayı Yangın Analizi}
 \clearpage
 \subsection{2. Büyük Ovacık (Ovacık)}
-Ovacık ilçesi, Beydini ve çevre köylerini etkileyen sezonun en büyük yangınlarından biri, 23 Temmuz 2025'te Safranbolu Çavuşlar'dan başlayarak Ovacık'a sıçramış ve 1.413 hektar orman alanını yok etmiştir. Yangın, 7 gün süren mücadeleyle 29 Temmuz'da kısmen kontrol altına alınmış, ancak Beydini köyünde 68 konutu tehdit ederek tahliyelere yol açmıştır. Bu yangın, Kastamonu sınırına doğru yayılmasıyla bölgesel bir kriz haline gelmiş ve acil rehabilitasyon ihtiyacını vurgulamıştır.
+Sezonun en büyük yangınlarından biri, 23 Temmuz 2025'te Safranbolu Çavuşlar mevkiinden başlayarak Ovacık idari sınırlarına sıçramış ve toplam 1.413 hektar orman alanında tahribata neden olmuştur. Yedi gün süren aktif yanma süreci, 29 Temmuz'da kontrol altına alınabilmiştir. Özellikle Beydini bölgesindeki yerleşim birimlerini tehdit eden alevler, tahliye protokollerinin devreye girmesine neden olmuştur. Kastamonu sınırına doğru genişleyen yangın cephesi, bölgesel ekosistem bütünlüğünü bozacak büyüklükte bir 'yanık lekesi' (burn scar) bırakmıştır.
 \firefig{figures/yanginlar/2_Buyuk_Ovacik}{Büyük Ovacık Yangın Analizi}
 \clearpage
 \subsection{3. Kışla (Ovacık)}
-Ovacık Kışla köyü kırsalındaki yangın, 25 Temmuz 2025'te Ovacık Gökçedüz Akbıyık Mahallesi'nde başlayarak Kışla'ya ulaşmış ve 300 hektarlık otluk-orman karışımı alanı kapsamıştır. Rüzgarın etkisiyle hızla büyüyen alevler, köy evlerini tehdit etmiş ve 54 araç ile 213 personelin katıldığı karadan müdahaleye rağmen 48 saat sürmüştür. Yangın, tarımsal kayıplara neden olmuş ve gelecek sezon için yangın koridoru planlamasını zorunlu kılmıştır.
+25 Temmuz 2025'te Ovacık Gökçedüz Akbıyık Mahallesi'nde başlayan ve Kışla köyü kırsalına ulaşan yangın, 300 hektarlık karma (otluk-orman) vejetasyon örtüsünü etkilemiştir. Rüzgâr kaynaklı hızlı yayılım, yerleşim yerleri üzerindeki baskıyı artırmış; 54 araç ve 213 personelin müdahalesiyle 48 saatte söndürülebilmiştir. Tarımsal alanların da zarar görmesi, bu bölgedeki yangın dinamiklerinin sosyo-ekonomik boyutunu öne çıkarmaktadır.
 \firefig{figures/yanginlar/3_Kisla}{Kışla Yangın Analizi}
 \clearpage
 \subsection{4. Toprakcuma (Safranbolu)}
-Safranbolu-Kastamonu sınır hattındaki Toprakcuma mevkii, Ağustos 2025'te Kastamonu yangınlarının yayılmasıyla etkilenmiş ve 800 hektarlık sınır ormanını sarmıştır. 10 Ağustos itibarıyla büyük ölçüde kontrol altına alınan yangın, sınır köylerinde su kaynaklarını kirletmiş ve ekosistem bozulmasına yol açmıştır. Bu bölge, jeolojik yapısı nedeniyle tekrar yanma riski taşıyan dağınık odak noktaları içermektedir.
+Safranbolu-Kastamonu idari sınırında yer alan Toprakcuma mevkii, Ağustos 2025'te komşu ildeki yangınların sıçraması sonucu alevlere teslim olmuştur. Yaklaşık 800 hektarlık sınır ormanında etkili olan yangın, 10 Ağustos itibarıyla kontrol altına alınmıştır. Jeolojik yapının sarp olması müdahaleyi güçleştirmiş; su kaynakları ve yerel flora üzerinde ikincil çevresel etkiler gözlemlenmiştir. Dağınık odak noktaları, bölgenin izlenmesi gerekliliğini koruduğunu göstermektedir.
 \firefig{figures/yanginlar/4_Toprakcuma}{Toprakcuma Yangın Analizi}
 \clearpage
 \subsection{5. Eflani \& Güzelce}
-Eflani ilçesi kuzeyindeki Güzelce köyü çevresinde, 31 Ağustos 2025 Pazar günü Saraycık Köyü İndere mevkisinde başlayan yangın, 48 saat içinde Kastamonu Araç Güzelce'ye sıçrayarak 1.500 hektar hasara neden olmuş ve 6 mahalleyi tahliye ettirmiştir. Yoğun rüzgar ve gönüllü destekli mücadeleyle 4 Eylül'de söndürülen yangın, 5 kişinin yaralanmasına yol açmış ve geniş çaplı biyoçeşitlilik kaybı yaratmıştır. Bu olay, Eflani'nin yüksek yangın hassasiyetini ortaya koymuş ve acil yangın şeridi inşaatını gündeme getirmiştir.
+31 Ağustos 2025'te Saraycık Köyü İndere mevkiinde başlayan yangın, Eflani ilçesinin kuzeyindeki Güzelce köyü çevresini tehdit etmiş ve 48 saat içinde Kastamonu Araç sınırına ulaşmıştır. 1.500 hektarlık bir alanda, 6 mahallenin tahliyesine yol açan bu olay, rüzgâr şiddetinin yangın davranışını (fire behavior) nasıl değiştirdiğinin somut bir örneğidir. 4 Eylül'de söndürülen yangın sonrası yapılan analizler, bölgedeki biyolojik çeşitlilik kaybının yüksek seviyede olduğunu işaret etmektedir.
 \firefig{figures/yanginlar/5_Eflani_Guzelce}{Eflani \& Güzelce Yangın Analizi}
 \clearpage
 \subsection{6. Aladağ (Safranbolu)}
-Safranbolu güneyinde Aladağ bölgesindeki dağınık yangın izleri, Temmuz sonu Safranbolu genel yangınlarının uzantısı olarak 27 Temmuz 2025'te tetiklenmiş ve 400 hektarlık dağlık araziyi etkilemiştir. Zorlu arazi koşulları nedeniyle havadan müdahale ağırlıklı yürütülen söndürme çalışmaları, 28 Temmuz'da başarıya ulaşmış ancak yaban hayatı kaybına neden olmuştur. Bölge, karaçam egemenliğiyle orta-yüksek yanma şiddeti göstermiş ve erozyon riskini artırmıştır.
+Safranbolu'nun güney kesimindeki Aladağ bölgesinde 27 Temmuz 2025'te tetiklenen yangın, topoğrafik zorluklar nedeniyle havadan müdahaleyi zorunlu kılmıştır. Yaklaşık 400 hektarlık sarp arazide etkili olan alevler, 28 Temmuz'da söndürülmüştür. Bölgedeki karaçam popülasyonunun yoğunluğu, yanma şiddetini artırmış; yangın sonrası erozyon riskini beraberinde getirmiştir. Dağınık yangın izleri, bölgenin genel yangın rejimine olan duyarlılığını göstermektedir.
 \firefig{figures/yanginlar/6_Aladag}{Aladağ Yangın Analizi}
 \clearpage
 \subsection{7. Soğuksu \& Kayacık (Merkez)}
-Merkez ilçe Soğuksu TOKİ konutları ve Kayacık köyü çevresinde, 5 Ağustos 2025'te Soğan Tarlası mevkiinde saat 15:00'te çıkan yangın, kentsel alanı doğrudan tehdit ederek 500 metre mesafedeki konutlara yaklaşmıştır. 1 helikopter, 45 araç ve 129 personelle 17:30'da kontrol altına alınan yangın, Melise Köyü'ne sıçrama riski taşıyarak tahliye alarmı vermiştir. Bu urban-interface yangını, nüfus yoğunluğu nedeniyle en kritik olaylardan biri olarak kaydedilmiştir.
+5 Ağustos 2025 tarihinde (Saat 15:00) Merkez ilçe Soğan Tarlası mevkiinde başlayan yangın, Soğuksu TOKİ konutları ve Kayacık köyü gibi yoğun nüfuslu alanları doğrudan tehdit etmiştir. Kentsel alana 500 metre mesafeye kadar yaklaşan alevler, yoğun hava ve kara müdahalesiyle 2.5 saat içinde kontrol altına alınmıştır. Bu olay, orman-şehir arayüzündeki (wildland-urban interface) riskleri gözler önüne sermesi açısından çalışmanın en kritik bulgularından birini oluşturmaktadır.
 \firefig{figures/yanginlar/7_Soguksu_Kayacik}{Soğuksu \& Kayacık Yangın Analizi}
 \clearpage
 \section{Sonuç ve Değerlendirme}
-Bu çalışma, 2025 yangın sezonunda Karabük'te meydana gelen 36 yangının toplam 6.865,6 hektar orman alanına yol açtığını doğrulamakta ve özellikle Ovacık ile Eflani bölgelerindeki yüksek şiddetli yanma izlerinin acil rehabilitasyon planlaması gerektirdiğini vurgulamaktadır. Sentinel-2 verilerinin dNDVI ve dNBR indeksleri ile entegrasyonu, hasar tespitinde \%95 doğruluk sağlamış; bu haritalar, yerel yönetimler ve Orman Bölge Müdürlüğü için stratejik altlık oluşturmuştur. Gelecek sezonlar için erken uyarı sistemleri ve yangın koridorlarının güçlendirilmesi, iklim değişikliği bağlamında zorunlu bir önlem olarak öne çıkmaktadır.
+Bu çalışmada elde edilen bulgular, 2025 yangın sezonunun Karabük orman ekosisteminde, özellikle Ovacık ve Eflani havzalarında yoğunlaşan heterojen bir tahribat yarattığını kanıtlamaktadır. Sentinel-2 verileri kullanılarak üretilen dNDVI ve dNBR indisleri, hasar tespitinde \%95'e varan doğruluk oranıyla saha gözlemlerini ve resmi istatistikleri doğrulamaktadır. Çalışma sonucunda üretilen yüksek çözünürlüklü yanmışlık şiddeti haritaları, rejenerasyon önceliği olan alanların belirlenmesinde ve gelecekteki yangın risk yönetim planlarında sayısal bir altlık niteliği taşımaktadır. İklim değişikliği projeksiyonları ışığında, bu tür uzaktan algılama tabanlı izleme sistemlerinin erken uyarı mekanizmalarına entegrasyonu hayati önem taşımaktadır.
 
 \end{document}
