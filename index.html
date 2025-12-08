@@ -3,100 +3,586 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karabük 2025 Yangın Analizi - Sonuçlar</title>
-    <style>
-        :root { --primary: #c0392b; --dark: #2c3e50; --light: #ecf0f1; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
-        header { background-color: var(--dark); color: white; padding: 20px 0; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { margin: 0; font-weight: 300; font-size: 2.2rem; }
-        h2 { border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-top: 40px; color: var(--dark); }
-        .subtitle { font-size: 0.9rem; color: #bdc3c7; margin-top: 5px; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .card-header { background-color: var(--light); padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; color: var(--dark); }
-        .card-body { padding: 15px; }
-        .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .btn { text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; transition: background 0.2s; color: white; display: inline-block; }
-        .btn-html { background-color: #2980b9; } .btn-html:hover { background-color: #3498db; }
-        .btn-png { background-color: #27ae60; } .btn-png:hover { background-color: #2ecc71; }
-        .download-section { background: white; padding: 20px; border-radius: 8px; margin-top: 20px; }
-        footer { text-align: center; margin-top: 50px; padding: 20px; font-size: 0.9rem; color: #7f8c8d; }
-    </style>
+    <title>Karabük 2025 Yangın Analizi</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<header>
-    <h1>Karabük 2025 Yangın Analizi</h1>
-    <div class="subtitle">Sentinel-2 Uydu Görüntüleri ile Hasar Tespiti</div>
-    <div style="font-size: 0.8rem; margin-top: 10px;">Hazırlayan: Yusuf Talha ARABACI - Karabük Üniversitesi</div>
-</header>
-
-<div class="container">
-
-<section><h2>1. İl Geneli Tarama (Overview)</h2><div class="grid">
-    <div class="card">
-        <div class="card-header">Karabük İli Tamamı</div>
-        <div class="card-body">
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">İl genelindeki tüm yangın izlerinin genel görünümü.</p>
-            <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/il_geneli/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/il_geneli/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/il_geneli/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/il_geneli/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/il_geneli/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/il_geneli/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/il_geneli/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/il_geneli/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
+    <header>
+        <div class="container">
+            <h1>Karabük 2025 Yangın Analizi</h1>
+            <p class="subtitle">Sentinel-2 Uydusu ve Google Earth Engine ile Hasar Tespit Raporu</p>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">7</span>
+                    <span class="stat-label">Analiz Edilen Bölge</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">1200+ km²</span>
+                    <span class="stat-label">Taranan Alan</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">Sentinel-2</span>
+                    <span class="stat-label">Uydu Verisi</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">2 Fark İndeksi</span>
+                    <span class="stat-label">dNDVI & dNBR</span>
+                </div>
+            </div>
         </div>
-    </div>
-    </div></section><section><h2>2. Bölgesel Detaylı Analizler</h2><div class="grid">
-            <div class="card">
-                <div class="card-header">Burunsuz & Kayı Köyü (Güney Merkez)</div>
-                <div class="card-body">
-                    <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/yanginlar/1_Cildikisik_Kayi/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/1_Cildikisik_Kayi/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/yanginlar/1_Cildikisik_Kayi/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/1_Cildikisik_Kayi/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/yanginlar/1_Cildikisik_Kayi/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/1_Cildikisik_Kayi/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/yanginlar/1_Cildikisik_Kayi/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/1_Cildikisik_Kayi/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
+    </header>
+
+    <main class="container">
+        
+        <section id="ozet">
+            <h2 class="section-title">Proje Hakkında</h2>
+            <div class="analysis-info">
+                <h3>Özet</h3>
+                <p>Bu çalışma, 2025 yaz sezonunda Karabük ilinde (Ovacık, Eflani, Safranbolu) meydana gelen orman yangınlarının etkilerini belirlemektedir. 
+                ESA WorldCover verisi ile tarım ve yerleşim alanları maskelenerek sadece orman ve çalılık alanlardaki kayıplar analiz edilmiştir.</p>
+                <br>
+                <h3>Metodoloji</h3>
+                <ul>
+                    <li><strong>Veri Kaynağı:</strong> Sentinel-2 L2A (10m çözünürlük)</li>
+                    <li><strong>Platform:</strong> Google Earth Engine (Python API)</li>
+                    <li><strong>Zaman Aralığı:</strong> Temmuz 2025 (Öncesi) vs. Eylül 2025 (Sonrası)</li>
+                </ul>
+                <div style="margin-top: 1.5rem;">
+                    <a href="paper/main.pdf" class="btn btn-primary" target="_blank">📄 Raporu İndir (PDF)</a>
                 </div>
             </div>
-            
-            <div class="card">
-                <div class="card-header">Büyük Ovacık Yangını (Beydini & Alınca)</div>
-                <div class="card-body">
-                    <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/yanginlar/2_Buyuk_Ovacik/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/2_Buyuk_Ovacik/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/yanginlar/2_Buyuk_Ovacik/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/2_Buyuk_Ovacik/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/yanginlar/2_Buyuk_Ovacik/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/2_Buyuk_Ovacik/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/yanginlar/2_Buyuk_Ovacik/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/2_Buyuk_Ovacik/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
-                </div>
+        </section>
+
+        <section id="il-geneli">
+            <h2 class="section-title">İl Geneli Tarama (Overview)</h2>
+            <div class="card" style="margin-bottom: 2rem;">
+                 <div class="card-img-container" style="aspect-ratio: 21/9;">
+                    <img src="paper/figures/overview.png" alt="Genel Bakış">
+                 </div>
+                 <div class="card-body">
+                    <h3 class="card-title">Genel Durum Haritası</h3>
+                    <p class="card-desc">Tüm Karabük il sınırları içerisindeki yangın noktalarının kuş bakışı görünümü.</p>
+                    <a href="paper/figures/overview.png" class="btn btn-outline" download>Resmi İndir</a>
+                 </div>
             </div>
-            
-            <div class="card">
-                <div class="card-header">Kışla Köyü (Ovacık Doğusu)</div>
-                <div class="card-body">
-                    <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/yanginlar/3_Kisla/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/3_Kisla/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/yanginlar/3_Kisla/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/3_Kisla/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/yanginlar/3_Kisla/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/3_Kisla/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/yanginlar/3_Kisla/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/3_Kisla/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
+
+            <div class="grid">
+
+        </section>
+        <section id="il_geneli">
+            <h2 class="section-title">İl Geneli Detaylı Analiz</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/il_geneli/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/il_geneli/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/il_geneli/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">Toprakcuma (Safranbolu - Kastamonu Sınırı)</div>
-                <div class="card-body">
-                    <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/yanginlar/4_Toprakcuma/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/4_Toprakcuma/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/yanginlar/4_Toprakcuma/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/4_Toprakcuma/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/yanginlar/4_Toprakcuma/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/4_Toprakcuma/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/yanginlar/4_Toprakcuma/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/4_Toprakcuma/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/il_geneli/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/il_geneli/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/il_geneli/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">Eflani - Güzelce (Çankırı Sınırı)</div>
-                <div class="card-body">
-                    <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/yanginlar/5_Eflani_Guzelce/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/5_Eflani_Guzelce/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/yanginlar/5_Eflani_Guzelce/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/5_Eflani_Guzelce/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/yanginlar/5_Eflani_Guzelce/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/5_Eflani_Guzelce/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/yanginlar/5_Eflani_Guzelce/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/5_Eflani_Guzelce/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/il_geneli/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/il_geneli/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/il_geneli/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">Aladağ Yangını (Merkez Batı)</div>
-                <div class="card-body">
-                    <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/yanginlar/6_Aladag/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/6_Aladag/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/yanginlar/6_Aladag/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/6_Aladag/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/yanginlar/6_Aladag/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/6_Aladag/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/yanginlar/6_Aladag/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/6_Aladag/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/il_geneli/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/il_geneli/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/il_geneli/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
                 </div>
+    
             </div>
-            
-            <div class="card">
-                <div class="card-header">Soğuksu & Kayacık (Merkez Kuzeybatı)</div>
-                <div class="card-body">
-                    <div style="margin-bottom: 8px;"><strong>dNDVI:</strong><div class="btn-group"><a href="results/yanginlar/7_Soguksu_Kayacik/dNDVI.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/7_Soguksu_Kayacik/dNDVI.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>dNBR:</strong><div class="btn-group"><a href="results/yanginlar/7_Soguksu_Kayacik/dNBR.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/7_Soguksu_Kayacik/dNBR.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>post_RGB:</strong><div class="btn-group"><a href="results/yanginlar/7_Soguksu_Kayacik/post_RGB_2025-09-05_2025-09-30.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/7_Soguksu_Kayacik/post_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div><div style="margin-bottom: 8px;"><strong>pre_RGB:</strong><div class="btn-group"><a href="results/yanginlar/7_Soguksu_Kayacik/pre_RGB_2025-07-01_2025-07-20.html" target="_blank" class="btn btn-html">Harita (HTML)</a><a href="results/yanginlar/7_Soguksu_Kayacik/pre_RGB.png" target="_blank" class="btn btn-png">Görsel (PNG)</a></div></div>
+    
+        </section>
+        <section id="yanginlar\1_Cildikisik_Kayi">
+            <h2 class="section-title">1 Cildikisik Kayi</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/1_Cildikisik_Kayi/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
                 </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/1_Cildikisik_Kayi/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/1_Cildikisik_Kayi/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/1_Cildikisik_Kayi/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/1_Cildikisik_Kayi/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
             </div>
-            </div></section>
+    
+        </section>
+        <section id="yanginlar\2_Buyuk_Ovacik">
+            <h2 class="section-title">2 Buyuk Ovacik</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/2_Buyuk_Ovacik/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/2_Buyuk_Ovacik/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/2_Buyuk_Ovacik/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/2_Buyuk_Ovacik/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/2_Buyuk_Ovacik/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </section>
+        <section id="yanginlar\3_Kisla">
+            <h2 class="section-title">3 Kisla</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/3_Kisla/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/3_Kisla/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/3_Kisla/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/3_Kisla/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/3_Kisla/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/3_Kisla/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/3_Kisla/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/3_Kisla/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/3_Kisla/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/3_Kisla/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/3_Kisla/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/3_Kisla/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </section>
+        <section id="yanginlar\4_Toprakcuma">
+            <h2 class="section-title">4 Toprakcuma</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/4_Toprakcuma/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/4_Toprakcuma/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/4_Toprakcuma/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/4_Toprakcuma/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/4_Toprakcuma/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/4_Toprakcuma/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/4_Toprakcuma/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/4_Toprakcuma/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/4_Toprakcuma/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/4_Toprakcuma/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/4_Toprakcuma/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/4_Toprakcuma/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </section>
+        <section id="yanginlar\5_Eflani_Guzelce">
+            <h2 class="section-title">5 Eflani Guzelce</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/5_Eflani_Guzelce/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/5_Eflani_Guzelce/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/5_Eflani_Guzelce/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/5_Eflani_Guzelce/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/5_Eflani_Guzelce/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/5_Eflani_Guzelce/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/5_Eflani_Guzelce/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/5_Eflani_Guzelce/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/5_Eflani_Guzelce/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/5_Eflani_Guzelce/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/5_Eflani_Guzelce/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/5_Eflani_Guzelce/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </section>
+        <section id="yanginlar\6_Aladag">
+            <h2 class="section-title">6 Aladag</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/6_Aladag/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/6_Aladag/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/6_Aladag/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/6_Aladag/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/6_Aladag/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/6_Aladag/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/6_Aladag/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/6_Aladag/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/6_Aladag/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/6_Aladag/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/6_Aladag/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/6_Aladag/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </section>
+        <section id="yanginlar\7_Soguksu_Kayacik">
+            <h2 class="section-title">7 Soguksu Kayacik</h2>
+            <div class="grid">
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/7_Soguksu_Kayacik/pre_RGB.png" alt="Yangın Öncesi (Pre-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Öncesi (Pre-Fire)</h3>
+                        <p class="card-desc">Yangın öncesi doğal renkli (RGB) Sentinel-2 görüntüsü (1-20 Temmuz 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/pre_RGB_2025-07-01_2025-07-20.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/pre_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/7_Soguksu_Kayacik/post_RGB.png" alt="Yangın Sonrası (Post-Fire)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yangın Sonrası (Post-Fire)</h3>
+                        <p class="card-desc">Yangın sonrası doğal renkli (RGB) Sentinel-2 görüntüsü (5-30 Eylül 2025).</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/post_RGB_2025-09-05_2025-09-30.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/post_RGB.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/7_Soguksu_Kayacik/dNDVI.png" alt="Vejetasyon Kaybı (dNDVI)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Vejetasyon Kaybı (dNDVI)</h3>
+                        <p class="card-desc">Delta NDVI (Vejetasyon Fark İndeksi). Kaybolan yeşil alanları ve bitki örtüsü hasarını gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/dNDVI.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/dNDVI.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="card">
+                    <div class="card-img-container">
+                        <img src="results/yanginlar/7_Soguksu_Kayacik/dNBR.png" alt="Yanmışlık Şiddeti (dNBR)" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">Yanmışlık Şiddeti (dNBR)</h3>
+                        <p class="card-desc">Delta NBR (Yanmışlık Oranı Farkı). Yangının şiddetini ve topraktaki ısı stresini gösterir.</p>
+                        <div class="btn-group">
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/dNBR.html" class="btn btn-primary" target="_blank">🗺️ İnteraktif Harita</a>
+                            <a href="results/yanginlar/7_Soguksu_Kayacik/dNBR.png" class="btn btn-outline" download>⬇️ PNG İndir</a>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+        </section>
+    </main>
+    
     <footer>
-        &copy; 2025 Karabük Üniversitesi - Yusuf Talha ARABACI. 
-        <br>Bu rapor Sentinel-2 verileri kullanılarak hazırlanmıştır.
+        <div class="container">
+            <p>2025 &copy; Yusuf Talha ARABACI - Karabük Üniversitesi</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Bu çalışma açık kaynaklıdır ve eğitim amaçlı hazırlanmıştır.</p>
+        </div>
     </footer>
-</div>
 </body>
 </html>
