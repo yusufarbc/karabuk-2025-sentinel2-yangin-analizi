@@ -31,9 +31,9 @@ Analizler, **Google Earth Engine (GEE)** Python API kullanılarak bulut tabanlı
 
 | Klasör | İçerik ve Açıklama |
 | :--- | :--- |
-| `gee/` | **Analiz Motoru:** GEE pipeline kodları, indeks hesaplamaları ve görüntü işleme scriptleri. |
-| `results/` | **Çıktılar:** Her bölge için üretilen HTML haritalar, PNG görseller ve CSV istatistikleri. |
-| `paper/` | **Akademik Rapor:** LaTeX formatında yazılmış bilimsel makale ve derlenmiş PDF. |
+| `moduller/` | **Analiz Motoru:** GEE pipeline kodları, indeks hesaplamaları ve görüntü işleme scriptleri. |
+| `sonuclar/` | **Çıktılar:** Her bölge için üretilen HTML haritalar, PNG görseller ve CSV istatistikleri. |
+| `rapor/` | **Akademik Rapor:** LaTeX formatında yazılmış bilimsel makale ve derlenmiş PDF. |
 | `analysis.ipynb` | **Jupyter Notebook:** Adım adım analiz sürecini çalıştıran ana defter. |
 | `index.html` | **Web Arayüzü:** Sonuçların sunulduğu modern, responsive web sayfası. |
 

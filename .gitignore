@@ -12,12 +12,19 @@ venv/
 
 # Results and generated artifacts
 # Results and generated artifacts
-# Track only selected file types from results (PNG, CSV, small HTML if needed)
+# Track only selected file types from results/sonuclar (PNG, CSV, small HTML if needed)
 results/*
 !results/**/
 !results/**/*.png
 !results/**/*.csv
 !results/**/*.html
+
+sonuclar/*
+!sonuclar/**/
+!sonuclar/**/*.png
+!sonuclar/**/*.csv
+!sonuclar/**/*.html
+
 
 # LaTeX build
 paper/*.aux
@@ -32,6 +39,19 @@ paper/*.synctex.gz
 paper/*.fdb_latexmk
 paper/*.fls
 paper/main_show.txt
+
+rapor/*.aux
+rapor/*.log
+rapor/*.out
+rapor/*.toc
+rapor/*.lof
+rapor/*.lot
+rapor/*.bbl
+rapor/*.blg
+rapor/*.synctex.gz
+rapor/*.fdb_latexmk
+rapor/*.fls
+rapor/main_show.txt
 
 # LaTeX temp at repo root
 texput.log

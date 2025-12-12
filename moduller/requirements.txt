@@ -1,0 +1,10 @@
+earthengine-api
+folium
+branca
+requests
+Pillow
+matplotlib
+pandas
+numpy
+jupyter
+geopandas
