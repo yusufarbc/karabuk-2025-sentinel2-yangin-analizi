@@ -7,6 +7,8 @@
 
 > **Sayısal Görüntü İşleme (Digital Image Processing) teknikleri kullanılarak, Sentinel-2 uydu görüntüleri üzerinden 2025 Karabük orman yangınlarının hasar tespit ve sınıflandırma çalışması.**
 
+<img width="2400" height="1792" alt="overview" src="https://github.com/user-attachments/assets/92f953ee-09a9-4d9e-ab9f-0d04d3f6371a" />
+
 ---
 
 ## 📌 Proje Hakkında
@@ -77,14 +79,6 @@ Jupyter Notebook üzerinden adım adım ilerleyebilirsiniz:
 ```bash
 jupyter notebook analysis.ipynb
 ```
-
----
-
-## 📊 Örnek Çıktı
-
-> *Aşağıdaki gibi dNBR haritaları, yangının en şiddetli olduğu merkez noktalarını (Kırmızı) ve çevreye yayılımını (Sarı/Turuncu) sayısal olarak gösterir.*
-
-*(Buraya `gorseller/` klasöründen örnek bir analiz görseli eklenebilir)*
 
 ---
 
