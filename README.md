@@ -21,7 +21,7 @@ Bu proje, 2025 yaz sezonunda Karabük ilinde (özellikle Ovacık, Safranbolu ve 
     *   **dNBR:** Yanmış alan tespiti ve şiddet sınıflandırması.
     *   **dNDVI:** Vejetasyon sağlığı ve klorofil kaybı analizi.
 *   **Filtreleme:** Bulut maskeleme, su maskeleme (Water Mask) ve gürültü giderme (Median Filtering).
-*   **Referans Veriler:** OGM kayıtları ve yerel haber kaynakları (Ground Truth).
+*   **Referans Veriler:** Basın açıklamarı ve yerel haber kaynakları.
 
 ---
 
