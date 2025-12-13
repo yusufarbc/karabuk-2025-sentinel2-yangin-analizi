@@ -32,7 +32,6 @@ Bu projenin teknik detayları, akademik raporu ve veri doğrulama kayıtları `d
 | Dosya / Klasör | İçerik ve Açıklama |
 | :--- | :--- |
 | 📄 **[TEKNIK_YONTEM.md](dokumanlar/TEKNIK_YONTEM.md)** | Kullanılan algoritmalar, formüller (NBR, NDVI) ve görüntü işleme akışı (Pipeline). |
-| 🗺️ **[CIKTI_OKUMA_REHBERI.md](dokumanlar/CIKTI_OKUMA_REHBERI.md)** | Üretilen haritaların renk skalaları, lejantları ve nasıl yorumlanacağı. |
 | 📰 **[YANGIN_HABER_ARSIVI.md](dokumanlar/YANGIN_HABER_ARSIVI.md)** | Basına yansıyan haberler, olay kronolojisi ve resmi açıklamalar. |
 | 🛠️ **[GELISTIRICI_NOTLARI.md](dokumanlar/GELISTIRICI_NOTLARI.md)** | Analiz sırasında karşılaşılan GEE API limitleri, çözüm yolları ve optimizasyon günlüğü. |
 | 🎓 **[rapor/rapor.pdf](rapor/rapor.pdf)** | Projenin çıktılarını içeren, akademik formatta hazırlanmış **Nihai Proje Raporu**. |
