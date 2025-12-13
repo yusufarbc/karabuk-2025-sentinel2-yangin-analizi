@@ -1,84 +1,96 @@
 # Karabük 2025 Orman Yangınları Uzaktan Algılama Analizi
 
-> **Sentinel-2 Uydu Görüntüleri ve Google Earth Engine ile Hasar Tespit Raporu**
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![Sentinel-2](https://img.shields.io/badge/Data-Sentinel--2-green)
+![GEE](https://img.shields.io/badge/Platform-Google%20Earth%20Engine-orange)
+![License](https://img.shields.io/badge/Lisans-MIT-lightgrey)
 
-Bu proje, 2025 yaz sezonunda Karabük ilinde (özellikle Ovacık, Eflani ve Safranbolu bölgelerinde) meydana gelen orman yangınlarının çevresel etkilerini bilimsel yöntemlerle analiz etmek amacıyla geliştirilmiştir.
-
----
-
-## 🌐 Canlı Demo ve Rapor
-
-Projenin interaktif haritalarını ve detaylı analiz sonuçlarını web üzerinden inceleyebilirsiniz:
-
-### [🚀 Analiz Platformunu Görüntüle](https://yusufarbc.github.io/karabuk-2025-sentinel2-yangin-analizi/)
+> **Sayısal Görüntü İşleme (Digital Image Processing) teknikleri kullanılarak, Sentinel-2 uydu görüntüleri üzerinden 2025 Karabük orman yangınlarının hasar tespit ve sınıflandırma çalışması.**
 
 ---
 
-## 🔍 Proje Hakkında
+## 📌 Proje Hakkında
 
-İklim değişikliğinin bir sonucu olarak 2025 yılında artan sıcaklıklar, Karabük ormanlarında ciddi yangınlara yol açmıştır. Bu çalışma, **Sentinel-2** uydusunun yüksek çözünürlüklü optik verilerini kullanarak yangın öncesi ve sonrası durumu karşılaştırmalı olarak sunar.
+Bu proje, 2025 yaz sezonunda Karabük ilinde (özellikle Ovacık, Safranbolu ve Eflani bölgelerinde) meydana gelen orman yangınlarının çevresel etkilerini **sayısal yöntemlerle** analiz etmek için geliştirilmiştir. **Google Earth Engine (GEE) Python API** kullanılarak, yangın öncesi ve sonrası uydu görüntüleri işlenmiş ve **dNBR (Normalized Burn Ratio Difference)** algoritması ile hasar şiddeti haritalanmıştır.
 
-### Uygulanan Bilimsel Metodoloji
-*   **dNDVI (Vejetasyon Fark İndeksi):** Bitki örtüsündeki yeşillik kaybını ve klorofil değişimini modeller.
-*   **dNBR (Yanmışlık Oranı Farkı):** USGS standartlarına göre yanma şiddetini (Düşük, Orta, Yüksek) sınıflandırır.
-*   **Maskeleme:** ESA WorldCover verisi kullanılarak tarım arazileri ve yerleşim yerleri analizden çıkarılmış, sadece ormanlık alanlara odaklanılmıştır.
+Çalışma, geleneksel haber takibinin ötesine geçerek, yangın izlerini piksel tabanlı matematiksel modellerle doğrulamayı ve mühendislik yaklaşımıyla raporlamayı hedefler.
 
-Analizler, **Google Earth Engine (GEE)** Python API kullanılarak bulut tabanlı olarak gerçekleştirilmiş ve sonuçlar **QGIS** ortamında doğrulanmıştır.
+### 🔬 Teknik Özellikler
+*   **Veri Seti:** Sentinel-2 L2A (10m Çözünürlük, Atmosferik Düzeltilmiş).
+*   **İndeksler:**
+    *   **dNBR:** Yanmış alan tespiti ve şiddet sınıflandırması.
+    *   **dNDVI:** Vejetasyon sağlığı ve klorofil kaybı analizi.
+*   **Filtreleme:** Bulut maskeleme, su maskeleme (Water Mask) ve gürültü giderme (Median Filtering).
+*   **Referans Veriler:** OGM kayıtları ve yerel haber kaynakları (Ground Truth).
 
 ---
 
-## 📂 Proje Yapısı
+## 📚 Dokümantasyon ve Raporlar
 
-| Klasör | İçerik ve Açıklama |
+Bu projenin teknik detayları, akademik raporu ve veri doğrulama kayıtları `dokumanlar/` klasöründe titizlikle arşivlenmiştir.
+
+| Dosya / Klasör | İçerik ve Açıklama |
 | :--- | :--- |
-| `moduller/` | **Analiz Motoru:** GEE pipeline kodları, indeks hesaplamaları ve görüntü işleme scriptleri. |
-| `sonuclar/` | **Çıktılar:** Her bölge için üretilen HTML haritalar, PNG görseller ve CSV istatistikleri. |
-| `rapor/` | **Akademik Rapor:** LaTeX formatında yazılmış bilimsel makale ve derlenmiş PDF. |
-| `analysis.ipynb` | **Jupyter Notebook:** Adım adım analiz sürecini çalıştıran ana defter. |
-| `index.html` | **Web Arayüzü:** Sonuçların sunulduğu modern, responsive web sayfası. |
+| 📄 **[TEKNIK_YONTEM.md](dokumanlar/TEKNIK_YONTEM.md)** | Kullanılan algoritmalar, formüller (NBR, NDVI) ve görüntü işleme akışı (Pipeline). |
+| 🗺️ **[CIKTI_OKUMA_REHBERI.md](dokumanlar/CIKTI_OKUMA_REHBERI.md)** | Üretilen haritaların renk skalaları, lejantları ve nasıl yorumlanacağı. |
+| 📰 **[YANGIN_HABER_ARSIVI.md](dokumanlar/YANGIN_HABER_ARSIVI.md)** | Basına yansıyan haberler, olay kronolojisi ve resmi açıklamalar. |
+| 🛠️ **[GELISTIRICI_NOTLARI.md](dokumanlar/GELISTIRICI_NOTLARI.md)** | Analiz sırasında karşılaşılan GEE API limitleri, çözüm yolları ve optimizasyon günlüğü. |
+| 🎓 **[rapor/rapor.pdf](rapor/rapor.pdf)** | Projenin çıktılarını içeren, akademik formatta hazırlanmış **Nihai Proje Raporu**. |
 
 ---
 
-## ⚡ Kurulum ve Kullanım
+## 🚀 Kurulum ve Kullanım
 
-Bu projeyi yerel ortamınızda çalıştırmak ve analizleri tekrar etmek için aşağıdaki adımları izleyin.
+Kendi bilgisayarınızda bu analizleri tekrar etmek için aşağıdaki adımları izleyebilirsiniz.
 
-### Önkoşullar
-*   Python 3.8+
-*   Google Earth Engine hesabı
+### Ön Hazırlık
+*   Python 3.8 veya üzeri yüklü olmalıdır.
+*   Aktif bir [Google Earth Engine](https://earthengine.google.com/) hesabı gereklidir.
 
-### 1. Kurulum
-
+### 1. Projeyi Klonlayın
 ```bash
-# Projeyi klonlayın
 git clone https://github.com/yusufarbc/karabuk-2025-sentinel2-yangin-analizi.git
+cd karabuk-2025-sentinel2-yangin-analizi
+```
 
-# Sanal ortam oluşturun (Önerilen)
+### 2. Sanal Ortam Oluşturun (Önerilen)
+```bash
 python -m venv .venv
+# Windows için:
+.venv\Scripts\activate
+# Linux/Mac için:
+source .venv/bin/activate
+```
 
-# Paketleri yükleyin
+### 3. Bağımlılıkları Yükleyin
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Kimlik Doğrulama
-Google Earth Engine API'sini projenizde kullanabilmek için yetkilendirme yapın:
+### 4. GEE Yetkilendirmesi
+Analiz scriptlerinin uydu verilerine erişebilmesi için giriş yapın:
 ```bash
 earthengine authenticate
 ```
 
-### 3. Analizi Çalıştırma
-Analiz sürecini başlatmak için Jupyter Notebook'u kullanabilirsiniz:
+### 5. Analizi Başlatın
+Jupyter Notebook üzerinden adım adım ilerleyebilirsiniz:
 ```bash
 jupyter notebook analysis.ipynb
 ```
-Alternatif olarak, `.py` scriptleri üzerinden doğrudan işlem yapabilirsiniz.
 
 ---
 
-## 📝 Lisans
+## 📊 Örnek Çıktı
 
-Bu proje **MIT Lisansı** ile lisanslanmıştır. Açık kaynaklıdır ve eğitim/araştırma amaçlı özgürce kullanılabilir.
+> *Aşağıdaki gibi dNBR haritaları, yangının en şiddetli olduğu merkez noktalarını (Kırmızı) ve çevreye yayılımını (Sarı/Turuncu) sayısal olarak gösterir.*
+
+*(Buraya `gorseller/` klasöründen örnek bir analiz görseli eklenebilir)*
 
 ---
 
-*Yusuf Talha ARABACI - Karabük Üniversitesi*
+## 📝 Lisans ve İletişim
+
+Bu proje **MIT Lisansı** ile sunulmuştur. Akademik ve eğitim amaçlı kullanıma açıktır.
+
+**Geliştirici:** Yusuf Talha ARABACI - *Karabük Üniversitesi*
