@@ -53,6 +53,7 @@
             background: linear-gradient(to right, #ea580c, #d97706);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .subtitle {
@@ -93,15 +94,7 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            /* Force 2 columns */
             gap: 2rem;
-        }
-
-        /* Responsive adjustment for mobile */
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         .card {
@@ -121,27 +114,20 @@
             border-color: var(--accent-color);
         }
 
-        /* Updated Image Container for Auto Height */
         .card-img-container {
             width: 100%;
             height: auto;
-            /* Allow height to adapt to image */
             overflow: hidden;
             background-color: #e2e8f0;
             cursor: pointer;
             border-bottom: 1px solid var(--border-color);
-            /* Removed aspect-ratio to let image define shape */
         }
 
-        /* Updated Image Scaling */
         .card-img-container img {
             width: 100%;
             height: auto;
-            /* Maintain aspect ratio */
             display: block;
-            /* Remove bottom whitespace */
             transition: transform 0.3s;
-            /* Removed object-fit: cover to prevent cropping */
         }
 
         .card:hover .card-img-container img {
@@ -186,6 +172,7 @@
             transition: all 0.2s;
             text-align: center;
             cursor: pointer;
+            min-height: 44px;
         }
 
         .btn-primary {
@@ -226,12 +213,6 @@
             margin-top: 3rem;
         }
 
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         .stat-item {
             background: var(--bg-color);
             padding: 1.5rem;
@@ -253,6 +234,215 @@
             color: var(--text-secondary);
             margin-top: 0.5rem;
             display: block;
+        }
+
+        /* ============================================
+           MOBILE RESPONSIVE STYLES
+           ============================================ */
+
+        /* Tablet (768px - 1023px) */
+        @media (max-width: 1023px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        /* Mobile and Tablet (max-width: 768px) */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            section {
+                margin-bottom: 3rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Mobile Only (max-width: 640px) */
+        @media (max-width: 640px) {
+
+            /* Header Optimizations */
+            header {
+                padding: 2rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+                line-height: 1.2;
+                margin-bottom: 0.75rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+
+            /* Stats Grid - Single Column for Mobile */
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+
+            .stat-item {
+                padding: 1.25rem;
+            }
+
+            .stat-value {
+                font-size: 1.75rem;
+            }
+
+            .stat-label {
+                font-size: 0.85rem;
+            }
+
+            /* Container and Spacing */
+            .container {
+                padding: 1rem;
+            }
+
+            section {
+                margin-bottom: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 1.4rem;
+                padding-left: 0.75rem;
+                border-left-width: 4px;
+            }
+
+            /* Analysis Info */
+            .analysis-info {
+                padding: 1.5rem;
+            }
+
+            .analysis-info h3 {
+                font-size: 1.1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            /* Grid Layout */
+            .grid {
+                gap: 1.25rem;
+            }
+
+            /* Card Optimizations */
+            .card-body {
+                padding: 1.25rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .card-desc {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+
+            /* Touch-Friendly Buttons */
+            .btn {
+                padding: 1rem 1.25rem;
+                font-size: 0.95rem;
+                min-height: 48px;
+            }
+
+            .btn-group {
+                grid-template-columns: 1fr;
+                gap: 0.875rem;
+            }
+
+            /* GitHub Button Mobile */
+            header .btn-outline {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            header .btn-outline svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Footer */
+            footer {
+                margin-top: 4rem;
+                padding-top: 2rem;
+                font-size: 0.9rem;
+            }
+
+            /* Body Text */
+            body {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Small Mobile (max-width: 480px) */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            header {
+                padding: 1.5rem 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Disable hover effects on touch devices */
+        @media (hover: none) {
+            .card:hover {
+                transform: none;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                border-color: var(--border-color);
+            }
+
+            .card:hover .card-img-container img {
+                transform: none;
+            }
+
+            .btn-primary:hover {
+                background-color: var(--accent-color);
+                box-shadow: none;
+            }
+
+            .btn-outline:hover {
+                border-color: var(--border-color);
+                color: var(--text-secondary);
+                background-color: transparent;
+            }
+        }
+
+        /* Active states for touch devices */
+        @media (hover: none) {
+            .btn:active {
+                transform: scale(0.98);
+            }
+
+            .card:active {
+                transform: scale(0.99);
+            }
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -282,6 +472,17 @@
                     <span class="stat-value">2 Fark İndeksi</span>
                     <span class="stat-label">dNDVI & dNBR</span>
                 </div>
+            </div>
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="https://github.com/yusufarbc/karabuk-2025-sentinel2-yangin-analizi" class="btn btn-outline"
+                    target="_blank" rel="noopener noreferrer"
+                    style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                        <path
+                            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                    </svg>
+                    GitHub Repository
+                </a>
             </div>
         </div>
     </header>

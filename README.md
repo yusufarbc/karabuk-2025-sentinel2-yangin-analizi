@@ -27,16 +27,66 @@ Bu proje, 2025 yaz sezonunda Karabük ilinde (özellikle Ovacık, Safranbolu ve 
 
 ---
 
+## 🔄 Proje İş Akışı
+
+```mermaid
+flowchart LR
+    A[Sentinel-2 Uydu Verileri] --> B[Google Earth Engine]
+    B --> C[Ön İşleme]
+    C --> D[Spektral İndeksler]
+    D --> E[NBR & NDVI]
+    E --> F[Değişim Analizi]
+    F --> G[dNBR Hesaplama]
+    G --> H[Hasar Sınıflandırması]
+    H --> I[Görselleştirme & Raporlama]
+    
+    style A fill:#e1f5e1
+    style E fill:#fff4e1
+    style G fill:#ffe1e1
+    style I fill:#e1e5ff
+```
+
+---
+
 ## 📚 Dokümantasyon ve Raporlar
 
 Bu projenin teknik detayları, akademik raporu ve veri doğrulama kayıtları `dokumanlar/` klasöründe titizlikle arşivlenmiştir.
 
-| Dosya / Klasör | İçerik ve Açıklama |
+### 📖 Teknik Dokümantasyon
+
+| Dosya | İçerik ve Açıklama |
 | :--- | :--- |
-| 📄 **[TEKNIK_YONTEM.md](dokumanlar/TEKNIK_YONTEM.md)** | Kullanılan algoritmalar, formüller (NBR, NDVI) ve görüntü işleme akışı (Pipeline). |
-| 📰 **[YANGIN_HABER_ARSIVI.md](dokumanlar/YANGIN_HABER_ARSIVI.md)** | Basına yansıyan haberler, olay kronolojisi ve resmi açıklamalar. |
-| 🛠️ **[GELISTIRICI_NOTLARI.md](dokumanlar/GELISTIRICI_NOTLARI.md)** | Analiz sırasında karşılaşılan GEE API limitleri, çözüm yolları ve optimizasyon günlüğü. |
-| 🎓 **[rapor/rapor.pdf](rapor/rapor.pdf)** | Projenin çıktılarını içeren, akademik formatta hazırlanmış **Nihai Proje Raporu**. |
+| 📄 **[TEKNIK_YONTEM.md](dokumanlar/TEKNIK_YONTEM.md)** | **Metodoloji ve Algoritmalar** - Sentinel-2 veri işleme, NBR/NDVI formülleri, dNBR hesaplama yöntemi, USGS sınıflandırma standartları ve gürültü azaltma teknikleri. |
+| 📰 **[YANGIN_HABER_ARSIVI.md](dokumanlar/YANGIN_HABER_ARSIVI.md)** | **Olay Kronolojisi ve Kaynaklar** - Yangınların zaman çizelgesi, basın açıklamaları, resmi istatistikler ve referans kaynaklar. Analiz sonuçlarının doğrulanması için kullanılan sözel veri seti. |
+| 🛠️ **[GELISTIRICI_NOTLARI.md](dokumanlar/GELISTIRICI_NOTLARI.md)** | **Teknik Zorluklar ve Çözümler** - GEE API kısıtlamaları, bellek optimizasyonu, Python vs JavaScript karşılaştırması, görselleştirme sorunları ve gelecek projeler için öneriler. |
+
+### 📊 Sonuçlar ve Çıktılar
+
+| Kaynak | Açıklama |
+| :--- | :--- |
+| 🎓 **[rapor/rapor.pdf](rapor/rapor.pdf)** | Akademik formatta hazırlanmış **Nihai Proje Raporu** - Metodoloji, bulgular, hasar haritaları ve sonuç değerlendirmesi. |
+| 🌐 **[index.html](index.html)** | İnteraktif web arayüzü - Tüm yangın bölgeleri için hasar haritaları, istatistikler ve görselleştirmeler. |
+| 📁 **[sonuclar/](sonuclar/)** | Analiz çıktıları - Her yangın bölgesi için HTML haritaları ve PNG görüntüleri. |
+
+### 🗺️ Dokümantasyon Haritası
+
+```mermaid
+graph TD
+    README[README.md - Ana Sayfa] --> TEKNIK[TEKNIK_YONTEM.md]
+    README --> HABER[YANGIN_HABER_ARSIVI.md]
+    README --> GELISTIRICI[GELISTIRICI_NOTLARI.md]
+    README --> RAPOR[rapor/rapor.pdf]
+    
+    TEKNIK --> ANALYSIS[analysis.ipynb]
+    HABER --> RAPOR
+    GELISTIRICI --> TEKNIK
+    
+    style README fill:#4a90e2,color:#fff
+    style TEKNIK fill:#7ed321
+    style HABER fill:#f5a623
+    style GELISTIRICI fill:#bd10e0
+    style RAPOR fill:#50e3c2
+```
 
 ---
 

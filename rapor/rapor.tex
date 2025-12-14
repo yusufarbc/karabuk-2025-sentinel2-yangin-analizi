@@ -76,9 +76,10 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-Bu proje, 2025 yaz sezonunda Karabük ilinde (özellikle Ovacık, Safranbolu ve Eflani bölgelerinde) meydana gelen orman yangınlarının çevresel etkilerini \textbf{sayısal görüntü işleme teknikleriyle} analiz etmek için geliştirilmiştir. 
-\textbf{Google Earth Engine (GEE) Python API} kullanılarak yangın öncesi ve sonrası uydu görüntüleri işlenmiştir. Hasar tespitinde \textbf{temel metrik olarak dNBR (Normalized Burn Ratio Difference)} algoritması kullanılırken, bitki örtüsü değişimini doğrulamak amacıyla \textbf{dNDVI} verilerinden de yararlanılmıştır. 
-Çalışma, geleneksel haber takibinin ötesine geçerek, yangın izlerini piksel tabanlı matematiksel modellerle doğrulamayı ve mühendislik yaklaşımıyla raporlamayı hedefler.
+Bu proje, 2025 yaz sezonunda Karabük ilinde meydana gelen orman yangınlarının çevresel etkilerini \textbf{sayısal görüntü işleme teknikleriyle} analiz etmektedir. 
+\textbf{Google Earth Engine (GEE) Python API} kullanılarak yangın öncesi ve sonrası uydu görüntüleri elde edilip işlenmiştir. 
+Yanma şiddetinin belirlenmesinde temel metrik olarak \textbf{dNBR (Normalized Burn Ratio Difference)} kullanılırken, sonuçların tutarlılığını artırmak amacıyla \textbf{dNDVI (Difference Normalized Difference Vegetation Index)} değişimlerinden de yararlanılmıştır. 
+Bu çalışma, geleneksel haber takibinin ötesine geçerek, yangın izlerini piksel tabanlı sayısal metotlarla nicel olarak haritalamayı ve elde edilen bulguları mühendislik yaklaşımıyla raporlamayı amaçlamaktadır.
 \end{abstract}
 
 % FIX: [H] placement, removed clearpage, maximized size
@@ -93,17 +94,24 @@ Bu proje, 2025 yaz sezonunda Karabük ilinde (özellikle Ovacık, Safranbolu ve 
 
 
 \section{Giriş}
-Sayısal görüntü işleme teknikleri, afet yönetimi ve çevresel izleme süreçlerinde ham uydu verilerinin anlamlı bilgiye dönüştürülmesinde kritik rol oynamaktadır. Bu çalışmada, Karabük ilindeki orman yangınları ele alınmıştır. Yüzölçümünün \%65'ini ormanların oluşturduğu Karabük ili, özellikle karaçam ve göknar ağırlıklı bitki örtüsüyle yangın hassasiyeti yüksek bir bölgedir. 2025 sezonunda bu durumdan önemli ölçüde etkilenmiştir. Özellikle Temmuz ve Eylül aylarında yoğunlaşan atmosferik koşullar (yüksek sıcaklık, düşük nem ve şiddetli rüzgar), il genelinde büyük ölçekli yangınları tetiklemiş, resmi makamlarca yapılan açıklamalara göre 36 farklı olayda toplam 6.865 hektar alanın zarar gördüğü bildirilmiştir. Bu çalışma, Sentinel-2 optik uydu verilerini kullanarak, devletin resmi kanalları ve basın yoluyla duyurulan bu yangınların etki alanını görselleştirmeyi ve mekansal dağılımını haritalamayı amaçlamaktadır. Analiz, resmi veriler ışığında uydu tabanlı yanma şiddeti (burn severity) sınıflaması ile saha gerçekleri arasındaki ilişkiyi irdelemektedir.
+Afet yönetimi ve çevresel izleme disiplinleri, ham uydu verilerinin anlamlı bilgiye dönüştürülmesi sürecinde sayısal görüntü işleme tekniklerinin kritik önemine dayanmaktadır.
+Bu kapsamda, çalışmamızın odak noktasını Karabük ilindeki orman yangınlarının analizi oluşturmaktadır. Yüzölçümünün %65'i ormanlık alandan oluşan ve özellikle karaçam ile göknar ağırlıklı bitki örtüsüne sahip olan Karabük, yangın hassasiyeti yüksek bir bölge olarak tanımlanmaktadır. Bu hassasiyet, 2025 yılı yangın sezonunda ciddi sonuçlarla kendini göstermiştir.
+Özellikle Temmuz ve Eylül aylarında yoğunlaşan yüksek sıcaklık, düşük nem ve şiddetli rüzgar gibi olumsuz atmosferik koşullar, il genelinde büyük ölçekli yangınları tetiklemiştir. Resmî makamlarca yapılan açıklamalara göre, bu süreçte kaydedilen 36 farklı yangın olayında toplam 6.865 hektarlık alanın zarar gördüğü rapor edilmiştir.
+
+Bu çalışma, devletin resmî kanalları ve medya aracılığıyla kamuoyuna duyurulan bu yangınların etki alanını görselleştirmeyi ve mekânsal dağılımını haritalamayı amaçlamaktadır. Analiz, Sentinel-2 optik uydu verileri kullanılarak elde edilen yanma şiddeti (burn severity) sınıflaması sonuçları ile resmî saha verileri arasındaki ilişkiyi bilimsel bir yaklaşımla irdelemektedir.
+
+
 
 \section{Materyal ve Yöntem}
-Bu çalışmada, Google Earth Engine (GEE) platformu üzerinde Python API kullanılarak piksel tabanlı görüntü işleme akışı (pipeline) geliştirilmiştir. Metodoloji; veri ön işleme, maskeleme, spektral indeks hesaplama ve eşik tabanlı sınıflandırma (thresholding) olmak üzere dört ana aşamadan oluşmaktadır.
+Bu çalışmanın metodolojisi, Google Earth Engine (GEE) platformu üzerinde Python API kullanılarak geliştirilen piksel tabanlı bir görüntü işleme akışına (pipeline) dayanmaktadır. 
+Uygulanan yöntem: veri ön işleme, maskeleme, spektral indeks hesaplama ve eşik tabanlı sınıflandırma (thresholding) olmak üzere dört ana aşamadan oluşmaktadır.
 
 \subsection{Veri Seti ve Ön İşleme}
-Analiz için Avrupa Uzay Ajansı'nın (ESA) \textbf{Sentinel-2 MSI} (MultiSpectral Instrument) sensöründen elde edilen \textbf{Level-2A} (Atmosferik düzeltmesi yapılmış) yüzey yansıma verileri kullanılmıştır.
+Analizlerimizde, Avrupa Uzay Ajansı'nın (ESA) \textbf{Sentinel-2 MSI (MultiSpectral Instrument)} sensöründen elde edilen, atmosferik düzeltmesi yapılmış \textbf{Level-2A} yüzey yansıma verileri kullanılmıştır.
 
 \begin{itemize}
-    \item \textbf{Veri Koleksiyonu:} \texttt{COPERNICUS/S2\_SR\_HARMONIZED}
-    \item \textbf{Zamansal Filtreleme:}
+    \item \textbf{Veri Koleksiyonu:} Veri kaynağı olarak GEE katalogundaki \texttt{COPERNICUS/S2\_SR\_HARMONIZED} koleksiyonu belirlenmiştir.
+    \item \textbf{Zamansal Filtreleme:} Yanma şiddetindeki değişimi tespit etmek amacıyla, ilgili yangın dönemi öncesi ve sonrası görüntüleri seçilmiştir:
     \begin{itemize}
         \item \textit{Yangın Öncesi:} 1 Temmuz 2025 -- 20 Temmuz 2025
         \item \textit{Yangın Sonrası:} 5 Eylül 2025 -- 30 Eylül 2025
@@ -111,11 +119,11 @@ Analiz için Avrupa Uzay Ajansı'nın (ESA) \textbf{Sentinel-2 MSI} (MultiSpectr
 \end{itemize}
 
 \subsection{Maskeleme Algoritmaları}
-Görüntü üzerindeki gürültüyü (noise) temizlemek ve analizi sadece ilgili alanlara odaklamak için iki aşamalı maskeleme uygulanmıştır:
+Görüntü üzerindeki gürültü (noise) etkilerini azaltmak ve analizi yalnızca ilgi alanlarına odaklamak amacıyla iki aşamalı bir maskeleme süreci uygulanmıştır.
 
 \begin{enumerate}
     \item \textbf{Bulut ve Sirüs Maskeleme (QA60 Bitmask):} Sentinel-2 verisindeki \texttt{QA60} bandı kullanılarak bulutlu ve sirüs (cirrus) bulutu içeren pikseler maskelenmiştir. Bit 10 (opak bulutlar) ve Bit 11 (sirüs bulutları) 0'a eşit olmayan pikseller analiz dışı bırakılmıştır.
-    \item \textbf{Arazi Örtüsü Maskeleme:} Yanmış alanların tarım arazisi hasadı veya şehirleşme ile karışmasını önlemek amacıyla \textbf{ESA WorldCover v100} veri seti kullanılmıştır. Sadece aşağıdaki sınıflar analize dahil edilmiş, diğer alanlar maskelenmiştir:
+    \item \textbf{Arazi Örtüsü Maskeleme:} Yanmış alanların tarım arazisi hasadı veya şehirleşme ile karışmasını önlemek amacıyla \textbf{ESA WorldCover v100} veri seti kullanılmıştır. Analiz sadece aşağıdaki arazi örtüsü sınıflarıyla sınırlandırılmıştır:
     \begin{itemize}
         \item \textbf{Sınıf 10:} Ormanlık alanlar.
         \item \textbf{Sınıf 20:} Çalılık ve makilik alanlar.
@@ -123,37 +131,38 @@ Görüntü üzerindeki gürültüyü (noise) temizlemek ve analizi sadece ilgili
 \end{enumerate}
 
 \subsection{Kullanılan Spektral İndeksler ve Metrikler}
-Yangın şiddetini sayısal olarak ifade etmek için spektral bant aritmetiği uygulanmıştır.
+Yangın şiddetini sayısal olarak ifade etmek için uydu görüntülerine spektral bant aritmetiği uygulanmıştır.
 
 \begin{itemize}
-    \item \textbf{Normalize Edilmiş Yanma Oranı (NBR):}
-    Yangın analizi için standart kabul edilen bu indeks, NIR (Yakın Kızılötesi - Band 8) ve SWIR (Kısa Dalga Kızılötesi - Band 12) bantları kullanılarak hesaplanmıştır. Sağlıklı bitki örtüsü NIR bandında yüksek yansıma yaparken, yanmış alanlar SWIR bandında yüksek yansıma yapar.
+    \item \textbf{Normalize Edilmiş Yanma Oranı (NBR):} Yangın sonrası analizler için standart kabul edilen bu indeks, NIR (Yakın Kızılötesi - Band 8) ve SWIR (Kısa Dalga Kızılötesi - Band 12) bantları kullanılarak hesaplanmıştır. Sağlıklı bitki örtüsü NIR bandında yüksek yansıma yaparken, yanmış alanlar SWIR bandında yüksek yansıma gösterir.
     \begin{equation}
         \label{eq:nbr}
-        NBR = \frac{\text{Band 8} - \text{Band 12}}{\text{Band 8} + \text{Band 12}}
+        \text{NBR} = \frac{\text{NIR} - \text{SWIR}}{\text{NIR} + \text{SWIR}}
     \end{equation}
 
-    \item \textbf{Delta NBR (dNBR):}
-    Yangının neden olduğu değişimi (yanma şiddetini) belirlemek için zamansal fark görüntüleme tekniği kullanılmıştır.
+    \item \textbf{Yanma Şiddeti Fark İndeksi (dNBR):} Yangının neden olduğu değişimi (yanma şiddeti) belirlemek amacıyla zamansal fark görüntüleme tekniği uygulanmıştır. Bu metrik, yangın öncesi ve sonrası NBR değerlerinin farkını ifade eder.
     \begin{equation}
         \label{eq:dnbr}
-        dNBR = NBR_{\text{öncesi}} - NBR_{\text{sonrası}}
+        \text{dNBR} = \text{NBR}_{\text{öncesi}} - \text{NBR}_{\text{sonrası}}
     \end{equation}
 
-    \item \textbf{Bitki Örtüsü Fark İndeksi (dNDVI):}
-    Klorofil kaybını doğrulamak amacıyla NDVI farkı da yardımcı metrik olarak kullanılmıştır.
+    \item \textbf{Normalize Edilmiş Fark Bitki Örtüsü İndeksi (NDVI):} NDVI, bitki örtüsü sağlığının ve yoğunluğunun küresel olarak en yaygın kullanılan ölçütüdür. Sağlıklı ve yoğun bitki örtüsü, klorofilin gücünden dolayı kırmızı (RED - Band 4) bantta düşük, hücre yapısından dolayı ise Yakın Kızılötesi (NIR - Band 8) bantta yüksek yansıma gösterir.
     \begin{equation}
         \label{eq:ndvi}
-        NDVI = \frac{\text{Band 8} - \text{Band 4}}{\text{Band 8} + \text{Band 4}}
+        \text{NDVI} = \frac{B_8 - B_4}{B_8 + B_4}
     \end{equation}
+    
+    \item \textbf{Bitki Örtüsü Fark İndeksi (dNDVI):} Klorofil kaybını doğrulamak için yardımcı bir metrik olarak NDVI farkı hesaplanmıştır. Bu, yangın nedeniyle bitki sağlığındaki azalışı NBR'ye ek olarak teyit etmeye yardımcı olur
     \begin{equation}
         \label{eq:dndvi}
-        dNDVI = NDVI_{\text{öncesi}} - NDVI_{\text{sonrası}}
+        \text{dNDVI} = \text{NDVI}_{\text{öncesi}} - \text{NDVI}_{\text{sonrası}}
     \end{equation}
+
 \end{itemize}
 
+
 \subsection{Yanma Şiddeti Sınıflandırması}
-Hesaplanan \textbf{dNBR} matrisi, USGS (United States Geological Survey) tarafından belirlenen standart eşik değerlerine göre 5 farklı sınıfa ayrılmıştır (Piksel tabanlı Segmentasyon):
+Hesaplanan \textbf{dNBR} matrisi, USGS (United States Geological Survey) tarafından belirlenmiş standart eşik değerlerine göre piksel tabanlı segmentasyon yöntemiyle 5 farklı sınıfa ayrılmıştır.
 
 \begin{table}[H]
     \centering
@@ -170,86 +179,140 @@ Hesaplanan \textbf{dNBR} matrisi, USGS (United States Geological Survey) tarafı
     \end{tabular}
 \end{table}
 
-Bu yöntemle, sürekli veri yapısına (continuous data) sahip olan uydu görüntüsü, kategorik bir tematik haritaya dönüştürülmüştür.
+Bu eşik tabanlı yöntemle, uydu görüntüsünün sürekli veri yapısı, yorumlamayı kolaylaştıran kategorik bir tematik haritaya dönüştürülmüştür.
 
 \clearpage
 
 \section{İl Geneli Yangın Analiz Bulguları}
 
-Sentinel-2 verileri üzerinden gerçekleştirilen dNBR ve dNDVI analizleri incelendiğinde, yangın izlerinin Ovacık--Eflani hattı boyunca, hakim rüzgâr yönü olan güneybatı-kuzeydoğu ekseninde yoğunlaştığı görülmektedir. Dikkat çekici bir diğer bulgu ise, uydu verilerinin basın haberlerinde detayı verilmeyen topografik yayılımı da sayısal olarak ortaya koymasıdır. dNBR analizinde bazı sarp bölgelerde gözlemlenen parazit yansımalar (noise), arazi eğiminden kaynaklı gölgelenmeler olarak değerlendirilmiş ve yorumlamada dikkate alınmıştır. Envanter özeti Tablo \ref{tab:fire_inventory} üzerinde sunulmuştur.
+Sentinel-2 uydu verileri üzerinden gerçekleştirilen dNBR ve dNDVI analizlerinin incelenmesi sonucunda, yangın izlerinin mekânsal dağılımının Ovacık-Eflani hattı boyunca belirginleştiği tespit edilmiştir. 
+Bu yoğunlaşma, bölgenin hâkim rüzgâr yönü olan güneybatı-kuzeydoğu ekseniyle paralellik göstermektedir.
+Dikkat çekici bir diğer bulgu, uydu verilerinin, basın haberlerinde detayı verilmeyen topografik yayılımı sayısal olarak ortaya koymasıdır. 
+Bu durum, yalnızca alan büyüklüğünü değil, yangınların yayıldığı coğrafi koşulları da anlamamıza olanak tanımıştır. 
+Bununla birlikte, dNBR analizinde bazı sarp ve eğimli bölgelerde parazit yansımalar (noise) gözlemlenmiştir. 
+Bu yansımalar, büyük ölçüde arazi eğiminden kaynaklanan gölgelenmeler olarak değerlendirilmiş ve nihai yorumlama sürecinde bu durum dikkate alınmıştır. 
+Yangın envanterinin özetine ait sayısal veriler Tablo \ref{tab:fire_inventory}'da detaylı olarak sunulmuştur.
 
 \begin{table}[H]
     \centering
-    \caption{Görüntü İşleme Sonucunda Tespit Edilen Yangın Alanları ve Resmi Veri Karşılaştırması}
+    \caption{Görüntü İşleme Analizi ile Tespit Edilen Kritik Yangın Bölgeleri ve Resmi Veri Kıyaslaması (Karabük, 2025)}
     \label{tab:fire_inventory}
-    \begin{tabularx}{\textwidth}{@{}Xlrl@{}}
+    \begin{tabular}{@{}p{4.5cm}cc>{\raggedright\arraybackslash}p{5cm}@{}}
     \toprule
-    \textbf{Yangın Bölgesi} & \textbf{Tarih} & \textbf{Resmi Veri} & \textbf{Yanma Karakteristiği} \\ \midrule
-    \textbf{Ovacık Merkez - Ana Yangın Kuşağı} & 23 Tem & $\approx 6.854$ ha & Geniş Alanlı Tepe Yangını (Çok Yüksek dNBR) \\
-    \textbf{Eflani - Araç (Kastamonu) Sınır Hattı} & 31 Ağu & $\approx 2.736$ ha & Sınır Aşan Yangın (Yüksek dNBR) \\
-    \textbf{Safranbolu - Toprakcuma Bölgesi} & 31 Ağu & Belirsiz & Sarp Arazi Yangını (Orta-Yüksek dNBR) \\
-    \textbf{Merkez - Kahyalar (Aladağ Mevkii)} & 02 Eyl & $\approx 500$ ha & Geç Sezon Yangını (Orta-Yüksek dNBR) \\
-    \textbf{Ovacık - Kışla Köyü} & 23 Tem & $\approx 300$ ha & Yerleşim Tehdidi (Yüksek dNBR) \\
-    \textbf{Merkez - Çıldıkısık \& Kayı} & 22 Tem & $\approx 55$ ha & Örtü Yangını (Orta dNBR) \\
-    \textbf{Merkez - Soğuksu \& Kayacık} & 05 Ağu & $\approx 1.1$ ha & Noktasal Yangın (Düşük-Orta dNBR) \\ \bottomrule
-    \end{tabularx}
+    \textbf{Yangın Bölgesi} & \textbf{Tarih} & \textbf{Alan (ha)} & \textbf{Notlar ve Kaynaklar} \\ \midrule
+    \textbf{Burunsuz-Çıldıkısık} & 22 Tem & Belirsiz & 18 saatte kontrol, zorlu arazi (Valilik) \\
+    \textbf{Ovacık Büyük Yangın} & 31 Ağu & $\sim$2.736 & Rüzgarla yayılan sınır aşan yangın (BBC) \\
+    \textbf{Gökçedüz Akbıyık} & 14 Eyl & Sınırlı & 3 saatte kontrol, örtü yangını (Sabah) \\
+    \textbf{Toprakcuma} & 31 Ağu & Belirsiz & Yol kenarı yayılımı, helikopter desteği (AA) \\
+    \textbf{Eflani-Araç} & 31 Ağu & $\sim$2.736 & Sınır aşan, 3 Eylül kontrol (AA, BBC) \\
+    \textbf{Aladağ} & 02 Eyl & Belirsiz & 3 köy tahliye, 500+ personel (Valilik) \\
+    \textbf{Soğuksu} & 05 Ağu & 1.1 & Kentsel arayüz riski, hızlı müdahale (Net Haber) \\ \bottomrule
+    \end{tabular}
 \end{table}
 
-Tablo \ref{tab:fire_inventory}'da sunulan yangın envanteri, 2025 yaz sezonunda il genelindeki yangın
+İl geneli yangın analiz görüntüleri (Şekil \ref{fig:il_geneli_detay}), yangın öncesi ve sonrası dönemler arasındaki değişimi (Pre/Post) ile bu değişimin nicel sonuçlarını (dNDVI/dNBR) bir arada görselleştirmektedir.
+Sunulan yangın öncesi görüntü (Temmuz 2025), Karabük ilindeki yoğun ve sağlıklı bitki örtüsünü göstermektedir. 
+Buna karşın yangın sonrası görüntü (Eylül 2025), yanmış alanlarda bitki örtüsü sağlığındaki ani düşüşü açıkça yansıtmaktadır.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{figures/il_geneli/pre_RGB.png}
+        \caption{Yangın Öncesi (Temmuz 2025)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{figures/il_geneli/post_RGB.png}
+        \caption{Yangın Sonrası (Eylül 2025)}
+    \end{subfigure}
+   
+    \par\bigskip
+   
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{figures/il_geneli/dNDVI.png}
+        \caption{dNDVI (Yeşillik Kaybı)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth,height=0.28\textheight,keepaspectratio]{figures/il_geneli/dNBR.png}
+        \caption{dNBR (Yanma Şiddeti)}
+    \end{subfigure}
+    \caption{Karabük İli Genelinde Yangın Öncesi/Sonrası Karşılaştırmalı Analiz}
+    \label{fig:il_geneli_detay}
+\end{figure}
+
+Bu değişimin analizi, dNDVI haritası ile genel bitki örtüsü kaybının mekânsal dağılımını teyit etmekte, buna ek olarak dNBR haritası ise yangın şiddetinin kategorik ayrımını sağlamaktadır.
+dNBR haritası üzerinde gözlemlenen bulgular, Tablo \ref{tab:fire_inventory}'de tanımlanan eşik değerleri ile doğrudan bir uyum sergilemektedir.
+Özellikle Ovacık ve Eflani çevrelerinde yoğunlaşan ve haritada koyu kırmızı tonlarla belirtilen alanlar, Tablo'da yüksek şiddet eşiği olarak belirlenen (örneğin, $>\!0.44$ dNBR) değerlerine karşılık gelmektedir.
+Bu durum, yangın hasarının bulunduğu kritik bölgelerin, uygulanan sayısal modelleme (dNBR) ile tanımlanan yüksek ve orta-yüksek şiddet sınıflarını görsel olarak desteklediğini göstermektedir.
+Böylece, görsel bulgular (haritadaki renk dağılımı), sayısal veriler (eşik değerleri) ışığında yangının ekosistem üzerindeki kalıcı etkisinin yoğunluğunu grafiksel olarak desteklemektedir.
 
 
 \clearpage
 
 \section{Bölgesel Yangın Analiz Bulguları}
-Yüksek çözünürlüklü Sentinel-2 görüntüleri üzerinden belirlenen 7 kritik bölge, yangın dinamiklerinin yerel topografya ve bitki örtüsüyle ilişkisini açıklamaktadır. Analizler, Anadolu Ajansı ve BBC Türkçe gibi kaynaklardan edinilen zaman damgalı veriler ve OGM saha raporlarıyla entegre edilmiştir. Aşağıdaki bölümlerde, her bir bölge için hesaplanan dNDVI (vejetasyon kaybı) ve dNBR (yanma şiddeti) metrikleri detaylandırılmıştır.
+Bu bölümde, yüksek çözünürlüklü Sentinel-2 görüntüleri üzerinden tespit edilen 7 kritik bölge, yangın dinamiklerinin yerel topoğrafya ve bitki örtüsüyle olan ilişkisi bağlamında incelenmiştir. 
+Yapılan analizler, salt uydu verileriyle sınırlı kalmayıp; Anadolu Ajansı ve BBC Türkçe gibi açık kaynaklardan elde edilen zaman damgalı veriler ve OGM saha raporlarıyla çapraz doğrulamaya tabi tutulmuştur. 
+Aşağıdaki alt başlıklarda, her bir bölge için güncellenmiş analiz sonuçları sunulmuştur.
 
-
-\subsection{Merkez - Çıldıkısık \& Kayı Köyleri}
-Safranbolu ve Merkez ilçe sınırında, Çıldıkısık \& Kayı Köyleri arasındaki ormanlık alanda 22 Temmuz 2025 tarihinde (Saat 16:32) başlayan yangın, hızlı müdahale ile ertesi sabah kontrol altına alınmıştır. Anadolu Ajansı ve yerel kaynaklara göre etkilenen alanın yaklaşık 55 hektar olduğu raporlanmıştır. Sentinel-2 görüntüleri, yangının yarattığı duman ve termal izleri doğrulamakla birlikte, hızlı soğutma çalışmaları nedeniyle yanmış alan izi (burn scar) sınırlı kalmıştır. Bölgedeki karaçam ormanlarında etkili olan yangın, dNBR analizlerine göre 3. seviye (orta) yanma şiddeti göstermiştir. Bu durum, müdahalenin tepe yangınına dönüşmeden etkili olduğunu işaret etmektedir.
-\firefig{figures/yanginlar/1_Cildikisik_Kayi}{Merkez - Çıldıkısık \& Kayı Köyleri Yangın Analizi}
-
-\clearpage
-
-\subsection{Ovacık Merkez - Ana Yangın Kuşağı}
-23 Temmuz 2025'te Safranbolu Çavuşlar mevkiinde (Soğanlıçay) başlayan yangın, şiddetli rüzgarın etkisiyle Ovacık ilçesine sıçrayarak Ovacık Merkez - Ana Yangın Kuşağı olarak adlandırılan ilin en büyük orman yangınına dönüşmüştür. Resmi kayıtlarda Ovacık genelinde 1.413 hektar, tüm yangın kompleksi (Soğanlıçay/Çavuşlar dahil) baz alındığında ise yaklaşık 6.854 hektarlık bir alanın etkilendiği belirtilmektedir. Uydu analizleri, bu geniş çaplı tahribatın mekansal sınırlarını ve özellikle Ovacık-Kastamonu hattındaki yoğun vejetasyon kaybını net bir şekilde haritalamaktadır. dNBR analizlerinin "yüksek" şiddet vermesi, yangının biyokütleyi tamamen tüketen bir karakterde (stand-replacing fire) seyrettiğini doğrulamaktadır.
-\firefig{figures/yanginlar/2_Buyuk_Ovacik}{Ovacık Merkez - Ana Yangın Kuşağı Analizi}
+\subsection{Burunsuz-Çıldıkısık Yangını Analizi}
+22 Temmuz 2025 tarihinde Karabük Merkez Burunsuz Köyü (Çıldıkısık mevkii) yakınlarında başlayan yangın, havadan ve karadan yoğun müdahalelerle yaklaşık 18 saat içinde kontrol altına alınmıştır. Karabük Valiliği raporlarına göre 16:32'de başlayan yangın, ertesi gün büyük ölçüde söndürülmüş olup, zorlu arazi şartlarına rağmen yerleşim yerlerinde hasara yol açmamıştır. Sentinel-2 görüntüleri, bölgedeki taze yüksek şiddetli yanık izlerini ortaya koymakta ve dNBR analizleri orta seviyeli vejetasyon kaybını doğrulamaktadır; Anadolu Ajansı kaynakları olayda can kaybı yaşanmadığını belirtmiştir.
+\firefig{figures/yanginlar/1_Cildikisik_Kayi}{Burunsuz-Çıldıkısık Yangını Analizi}
 
 \clearpage
 
-\subsection{Ovacık - Kışla Köyü Yangını}
-23 Temmuz 2025'te (Raporlarda bazen 25 Temmuz olarak anılsa da ana yangınla eş zamanlıdır) Ovacık - Kışla Köyü ve çevresinde etkili olan yangın, bağımsız bir olaydan ziyade Büyük Ovacık/Soğanlıçay yangınının bir uzantısı niteliğindedir. Resmi veriler bu bölgede yaklaşık 300 hektarlık bir alanın zarar gördüğünü işaret etmektedir. Uydu görüntüleri, Kışla Pazaryeri mevkiinde başlayan ve yerleşim yerlerini tehdit eden bu yangın kolunun, ana yangın cephesiyle birleşen yoğun duman ve ısı anomalilerini doğrulamaktadır.
-\firefig{figures/yanginlar/3_Kisla}{Ovacık - Kışla Köyü Yangın Analizi}
+\subsection{Ovacık Büyük Yangın Kuşağı Analizi}
+31 Ağustos 2025'te Eflani Saraycık Köyü İndere mevkiinde başlayan bu büyük yangın kuşağı, rüzgarın etkisiyle hızla genişleyerek Kastamonu il sınırına sıçramıştır. BBC Türkçe ve resmi açıklamalara göre 3 Eylül itibarıyla kontrol altına alınan yangın, Kastamonu uzantıları dahil edildiğinde yaklaşık 2.736 hektarlık orman ve tarım arazisini etkilemiştir. Sentinel-2 uydu analizleri, Eflani kuzeyinden sınıra uzanan koridorda sert NDVI düşüşleri göstermekte, dNBR değerleri ise değişken yanma şiddetine işaret etmektedir.
+\firefig{figures/yanginlar/2_Buyuk_Ovacik}{Ovacık Büyük Yangın Kuşağı Analizi}
 
 \clearpage
 
-\subsection{Safranbolu - Toprakcuma Bölgesi}
-31 Ağustos 2025 tarihinde Safranbolu - Toprakcuma Bölgesi (Harmancık/Aşağıgüney) mevkiinde başlayan yangın, 3 Eylül itibarıyla kontrol altına alınmıştır. Basına ve resmi makamlara yansıyan bilgilere göre yangın önemli bir alanda etkili olmuşsa da, kesin alan büyüklüğü resmi olarak netleşmemiştir. Sentinel-2 görüntüleri, resmi kaynaklarda belirtilen bu alan üzerindeki taze yanık izlerini (high severity burn scars) görsel olarak doğrulamaktadır. Sarp topoğrafya müdahaleyi güçleştirmiş olsa da, ekiplerin yoğun çalışması sonucu yerleşim yerlerinde büyük bir yıkım önlenmiştir.
-\firefig{figures/yanginlar/4_Toprakcuma}{Safranbolu - Toprakcuma Bölgesi Yangın Analizi}
+\subsection{Gökçedüz Akbıyık Yangını Analizi}
+14 Eylül 2025'te Ovacık Gökçedüz Köyü Akbıyık mahallesi kırsalında örtü yangını olarak başlayan olay, rüzgarla ormana sıçramasına rağmen ekiplerce üç saat içinde kontrol altına alınmıştır. Sabah ve NTV haberlerine göre, Temmuz ayındaki Ovacık yangınından bağımsız gelişen bu olayda, Sentinel-2 verileri yerleşim yerlerine yakın lokal ısı anomalileri ve dNBR zirveleri tespit etmiş, ancak tahliye gerektiren bir durum oluşmamıştır.
+\firefig{figures/yanginlar/3_Kisla}{Gökçedüz Akbıyık Yangını Analizi}
 
 \clearpage
 
-\subsection{Eflani - Araç (Kastamonu) Sınır Hattı}
-31 Ağustos 2025'te Eflani Saraycık Köyü İndere mevkiinde başlayan ve Eflani - Araç (Kastamonu) Sınır Hattı boyunca yayılan yangın, hızla Kastamonu sınırına geçmiştir. Resmi açıklamalara göre yangın, Kastamonu tarafındaki yayılım da dahil edildiğinde yaklaşık 2.736 hektarlık (orman ve tarım alanları) bir etki alanına sahiptir. Uydu analizleri, Eflani kuzeyinden Kastamonu sınırına uzanan geniş bir şerit üzerinde vejetasyon indekslerinde (NDVI) sert düşüşler tespit etmiştir. Bu olay, il sınırlarını aşan yangınların yönetiminde bölgesel koordinasyonun önemini göstermektedir.
-\firefig{figures/yanginlar/5_Eflani_Guzelce}{Eflani - Araç (Kastamonu) Sınır Hattı Yangın Analizi}
+\subsection{Toprakcuma Yangını Analizi}
+31 Ağustos 2025'te Safranbolu Toprakcuma (Harmancık ve Aşağıgüney) bölgesinde çıkan yangına arazözler ve helikopterlerle müdahale edilmiştir. Karabük Net Haber ve AA, müdahalenin Eylül başına kadar sürdüğünü belirtirken, Sentinel-2 analizleri sarp arazideki taze yanık izlerini ve yüksek şiddetli dNBR değerlerini doğrulamaktadır. Burunsuz yangınından bağımsız olan bu olay, Karabük-Kastamonu yolu boyunca yayılım göstermiştir.
+\firefig{figures/yanginlar/4_Toprakcuma}{Toprakcuma Yangını Analizi}
 
 \clearpage
 
-\subsection{Merkez - Kahyalar (Aladağ Mevkii)}
-Merkez - Kahyalar (Aladağ Mevkii) bölgesindeki yangın, 2 Eylül 2025 tarihinde başlamış ve havadan müdahale ile kontrol altına alınmıştır. Resmi raporlarda geniş bir alanda etkili olduğu belirtilen bu geç sezon yangını, Sentinel-2 analizlerinde Eylül başında oluşan taze yanık izleri olarak görselleştirilmiştir. Kahyalar ve Saitler köylerinde tahliyelere neden olan olay, yangın sezonunun Eylül ayına kadar uzadığını göstermektedir.
-\firefig{figures/yanginlar/6_Aladag}{Merkez - Kahyalar (Aladağ Mevkii) Yangın Analizi}
+\subsection{Eflani-Araç Yangını Analizi}
+31 Ağustos 2025'te Eflani Saraycık İndere'den başlayıp Kastamonu Araç (Güzelce) sınırına yayılan yangın, 3 Eylül'de kontrol altına alınmıştır. AA ve BBC verilerine göre yaklaşık 2.736 hektarı etkileyen bu sınır aşan yangın, uydu analizlerinde geniş bir koridor boyunca NDVI kaybı olarak izlenmiştir. dNBR haritaları, rüzgarlı koşullarda yoğun yanma bölgelerini, ancak yerleşim yerleri üzerindeki sınırlı etkiyi vurgulamaktadır.
+\firefig{figures/yanginlar/5_Eflani_Guzelce}{Eflani-Araç Yangını Analizi}
 
 \clearpage
 
-\subsection{Merkez - Soğuksu \& Kayacık Mevkii}
-5 Ağustos 2025 tarihinde Merkez - Soğuksu \& Kayacık Mevkii'nde meydana gelen yangın, yerleşim yerlerine yakınlığı nedeniyle büyük risk oluşturmuştur. Resmi makamlarca yaklaşık 1.1 hektar (11 dekar) olduğu belirtilen etkilenen alan, Soğuksu TOKİ konutlarına ve Kayacık köyüne sınırdır. Uydu görüntüleri, resmi kaynaklarda belirtilen bu lokal ancak riskli yangının izlerini doğrulamaktadır.
-\firefig{figures/yanginlar/7_Soguksu_Kayacik}{Merkez - Soğuksu \& Kayacık Mevkii Yangın Analizi}
+\subsection{Aladağ Yangını Analizi}
+2 Eylül 2025'te Merkez Kahyalar Köyü Aladağ mevkiinde başlayan yangın, rüzgarın etkisiyle hızla yayılarak Kahyalar, Saitler ve Kadıköy köylerinin tahliyesine neden olmuştur. Karabük Valiliği, 5 helikopter ve 500'den fazla personel ile müdahale edilen yangının 4 Eylül'de kontrol altına alındığını duyurmuştur. Sentinel-2 haritaları, Eylül başındaki bu taze yanık izlerini ve geç sezonda devam eden yüksek dNBR riskini doğrulamaktadır.
+\firefig{figures/yanginlar/6_Aladag}{Aladağ Yangını Analizi}
+
+\clearpage
+
+\subsection{Soğuksu Yangını Analizi}
+5 Ağustos 2025'te Merkez Soğuksu ve Kayacık (Arıcak/Yenice yolu) bölgesinde çıkan yaklaşık 1.1 hektarlık küçük ölçekli yangın, TOKİ konutlarına yakınlığı nedeniyle risk oluşturmuştur. Karabük Net Haber ve yerel kaynaklar, havadan ve karadan hızlı müdahale ile yangının tahliyeye gerek kalmadan söndürüldüğünü doğrulamaktadır. Uydu görüntüleri lokal izleri ve kentsel arayüzdeki (Wildland-Urban Interface) risk potansiyelini göstermektedir.
+\firefig{figures/yanginlar/7_Soguksu_Kayacik}{Soğuksu Yangını Analizi}
 
 \clearpage
 
 \section{Sonuç ve Değerlendirme}
-Bu çalışma, Sentinel-2 uydu verilerinin yangınların mekansal dağılımını ve şiddetini görselleştirmede yüksek etkinlik sağladığını ortaya koymaktadır. Resmi kurumlarca raporlanan alan verileri ile uydu tabanlı dNDVI/dNBR haritaları karşılaştırıldığında, yangınların konum ve yayılım yönlerinin büyük ölçüde örtüştüğü belirlenmiştir. Uydu analizleri, özellikle saha ekiplerinin ulaşmakta zorlandığı sarp arazilerdeki tahribatın görsel haritasını sunarken, devletin resmi açıklamalarında belirtilen sayısal veriler çalışmanın doğrulama (validation) noktasını oluşturmuştur.
 
-Sonuç olarak bu çalışma; optik uydu görüntülerinin sadece görsel bir izleme aracı olmadığını, doğru spektral indeksleme algoritmaları (dNBR) uygulandığında, afet yönetiminde sayısal veri üreten bir ölçüm aracına dönüştüğünü kanıtlamaktadır. Ovacık ve Eflani havzalarında yoğunlaşan tahribat, gelecekteki yangın yönetim planlarında bu bölgelere öncelik verilmesi gerektiğini işaret etmektedir.
+Bu proje çalışması sonucunda, 2025 yangın sezonunda Karabük ilini etkisi altına alan orman yangınlarının \textbf{yüksek çözünürlüklü dijital hasar envanteri} oluşturulmuştur. Google Earth Engine altyapısı ve Sentinel-2 uydu verileri kullanılarak yapılan analizlerde, il genelinde 7 kritik yangın bölgesi tespit edilmiş ve bu bölgelerin yanma şiddeti haritaları (dNBR) üretilmiştir.
+
+Elde edilen bulgular şu somut sonuçları ortaya koymuştur:
+\begin{itemize}
+    \item Yangın tahribatı, hakim rüzgâr yönüyle uyumlu olarak \textbf{Ovacık--Eflani hattında} ve güneybatı-kuzeydoğu ekseninde yoğunlaşmıştır.
+    \item Resmi raporlarda genel hatlarıyla belirtilen hasar bölgeleri, bu çalışma ile \textbf{piksel tabanlı hassasiyetle} sınırlandırılmış ve derecelendirilmiştir.
+    \item Özellikle saha ekiplerinin fiziksel erişiminin kısıtlı olduğu sarp ve engebeli arazilerdeki (Toprakcuma vb.) hasar durumu kayıt altına alınarak eksiksiz bir durum tespiti sağlanmıştır.
+\end{itemize}
+
+Proje çıktısı olarak sunulan bu haritalar ve veri setleri, bölgenin risk analizi, rehabilitasyon süreçleri ve gelecek yangın sezonu planlamaları için hazır bir \textbf{sayısal altlık} niteliğindedir. Çalışma, uydu tabanlı uzaktan algılama yöntemlerinin, afet sonrası hasar tespit çalışmalarında hızlı, maliyet etkin ve operasyonel bir araç olarak kullanılabileceğini göstermiştir.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{9}
@@ -258,28 +321,32 @@ Sonuç olarak bu çalışma; optik uydu görüntülerinin sadece görsel bir izl
 Key, C. H., \& Benson, N. C. (2006).
 Landscape Assessment (LA).
 \textit{FIREMON: Fire Effects Monitoring and Inventory System}.
-USDA Forest Service, Rocky Mountain Research Station.
+USDA Forest Service, Rocky Mountain Research Station, General Technical Report RMRS-GTR-164.
 
 \bibitem{esa2025}
 European Space Agency (ESA). (2025).
-\textit{Sentinel-2 User Handbook}. SP-1322/2.
+\textit{Sentinel-2 User Handbook}.
+ESA Standard Document, SP-1322/2.
 
 \bibitem{nasa2024}
-NASA. (2024).
-\textit{Earth Observatory: Spectral Indices for Burnt Scar Detection}.
+NASA Earth Observatory. (2024).
+\textit{Spectral Indices for Burnt Scar Detection}.
+Erişim Adresi: \url{https://earthobservatory.nasa.gov/}
 
 \bibitem{ogm2025}
 T.C. Orman Genel Müdürlüğü (OGM). (2025).
-\textit{Karabük İli Orman Yangınları Hakkında Basın Bilgilendirmeleri (Temmuz - Eylül 2025)}.
+\textit{Karabük İli Orman Yangınları Hakkında Resmi Basın Bilgilendirmeleri ve Saha Raporları (Temmuz - Eylül 2025)}.
+Ankara.
 
 \bibitem{aa2025}
 Anadolu Ajansı (AA). (2025).
-\textit{Karabük'teki Orman Yangınlarına İlişkin Haber Arşivi}.
+\textit{Karabük'teki Orman Yangınlarına İlişkin Haber ve Görsel Arşivi}.
 (Erişim Tarihi: Aralık 2025).
 
 \bibitem{usgs2024}
-USGS. (2024).
+United States Geological Survey (USGS). (2024).
 \textit{Landsat \& Sentinel-2 Burned Area Indices Interpretation Guide}.
+Department of the Interior.
 
 \end{thebibliography}
 
