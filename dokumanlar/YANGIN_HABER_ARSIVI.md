@@ -1,6 +1,29 @@
 # YANGIN HABER ARŞİVİ
 
+> 📍 **Navigasyon:** [Ana Sayfa](../README.md) | [Teknik Yöntem](TEKNIK_YONTEM.md) | [Geliştirici Notları](GELISTIRICI_NOTLARI.md)
+
+---
+
+## 📑 İçindekiler
+
+1. [Giriş](#-giriş)
+2. [Kronolojik Olay Özetleri](#-kronolojik-olay-özetleri)
+3. [Yangın Zaman Çizelgesi](#-yangın-zaman-çizelgesi)
+4. [Basına Yansıyan İstatistikler](#-basına-yansıyan-i̇statistikler)
+5. [Resmi Açıklamalar ve Kamuoyu](#-resmi-açıklamalar-ve-kamuoyu)
+6. [Kaynakça](#-kaynakça)
+7. [İlgili Dokümantasyon](#-i̇lgili-dokümantasyon)
+
+---
+
+## 📖 Giriş
+
 Bu belge, 2025 yılında Karabük'te meydana gelen orman yangınlarına dair **resmi açıklamalar, haber ajanslarının raporları ve kamuoyuna yansıyan detayları** kronolojik olarak derlemektedir. Projenin sayısal analizlerini tamamlayıcı nitelikteki bu "Sözel Veri Seti", yaşanan afetin boyutunu ve toplumsal etkisini anlamak için bir referans kaynağıdır.
+
+> **💡 İlgili Analiz:**
+> - Teknik metodoloji için: [TEKNIK_YONTEM.md](TEKNIK_YONTEM.md)
+> - Uydu görüntüleri ile tespit edilen hasar haritaları: [../sonuclar/](../sonuclar/)
+> - Akademik rapor: [../rapor/rapor.pdf](../rapor/rapor.pdf)
 
 ---
 
@@ -26,6 +49,38 @@ Bu belge, 2025 yılında Karabük'te meydana gelen orman yangınlarına dair **r
 *   **31 Ağustos - 2 Eylül 2025:** Eflani ilçesinde başlayan yangın, rüzgarla Kastamonu'nun Araç ilçesine (Güzelce Köyü) doğru ilerledi.
 *   **Etkiler:** Eflani ve Araç arasında kalan ormanlık alanlar ve tarım arazileri zarar gördü. 18 köy/mahalle duman ve alev tehdidi nedeniyle tahliye edildi. Dumanların Ankara'ya kadar ulaştığı rapor edildi.
 *   **3 Eylül 2025:** Eflani ve Toprakcuma bölgesindeki yangınlar tamamen kontrol altına alındı.
+
+---
+
+## 📅 Yangın Zaman Çizelgesi
+
+Aşağıdaki diyagram, yangınların kronolojik gelişimini görsel olarak göstermektedir:
+
+```mermaid
+timeline
+    title Karabük 2025 Orman Yangınları Kronolojisi
+    
+    section Temmuz Dalgası
+        22 Temmuz : Burunsuz Köyü yangını başladı
+        23 Temmuz : Safranbolu ve Ovacık'a sıçradı
+                  : Çavuşlar ve Kışla köyleri etkilendi
+                  : 10 köy boşaltıldı
+        24-27 Temmuz : Yoğun hava ve kara müdahalesi
+                     : 21 helikopter görevde
+        29 Temmuz : Yangınlar kontrol altına alındı
+    
+    section Ağustos Dalgası
+        7 Ağustos : Arıcak Köyü yangını
+                  : Soğuksu Mahallesi tehdit altında
+                  : Yeşilköy tahliye edildi
+    
+    section Eylül Dalgası
+        31 Ağustos : Eflani yangını başladı
+        1-2 Eylül : Kastamonu sınırına yayıldı
+                  : Araç ilçesi etkilendi
+                  : 18 köy/mahalle tahliye
+        3 Eylül : Tüm yangınlar kontrol altında
+```
 
 ---
 
@@ -64,3 +119,20 @@ Resmi kaynaklardan (OGM, Valilik) derlenen genel bilanço verileridir.
 2.  Orman Genel Müdürlüğü (OGM) Yangın Bilgilendirme Sistemi.
 3.  Anadolu Ajansı (AA) ve Yerel Medya Haberleri (Temmuz - Eylül 2025).
 4.  TRT Haber "Karabük Yangınları" Dosyası.
+
+---
+
+## 🔗 İlgili Dokümantasyon
+
+### Teknik Analizler
+- 📊 **Hasar Haritaları:** [../sonuclar/](../sonuclar/) - Her yangın bölgesi için dNBR haritaları
+- 🎓 **Akademik Rapor:** [../rapor/rapor.pdf](../rapor/rapor.pdf) - Bulgular ve değerlendirme
+- 🔬 **Metodoloji:** [TEKNIK_YONTEM.md](TEKNIK_YONTEM.md) - NBR/NDVI hesaplama yöntemleri
+- 💻 **Kaynak Kod:** [../analysis.ipynb](../analysis.ipynb) - GEE Python analiz notebook'u
+
+### Geliştirme Notları
+- 🛠️ **Teknik Zorluklar:** [GELISTIRICI_NOTLARI.md](GELISTIRICI_NOTLARI.md) - GEE API limitleri ve çözümler
+
+---
+
+> 📍 **Navigasyon:** [Ana Sayfa](../README.md) | [Teknik Yöntem](TEKNIK_YONTEM.md) | [Geliştirici Notları](GELISTIRICI_NOTLARI.md)
