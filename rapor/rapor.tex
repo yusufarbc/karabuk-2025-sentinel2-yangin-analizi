@@ -197,16 +197,16 @@ Yangın envanterinin özetine ait sayısal veriler Tablo \ref{tab:fire_inventory
     \centering
     \caption{Görüntü İşleme Analizi ile Tespit Edilen Kritik Yangın Bölgeleri ve Resmi Veri Kıyaslaması (Karabük, 2025)}
     \label{tab:fire_inventory}
-    \begin{tabular}{@{}p{5cm}cc>{\raggedright\arraybackslash}p{4.5cm}@{}}
+    \begin{tabular}{@{}p{4.5cm}cc>{\raggedright\arraybackslash}p{5cm}@{}}
     \toprule
-    \textbf{Yangın Bölgesi ve Konumu} & \textbf{Tarih} & \textbf{Resmi Veri (ha)} & \textbf{Yanma Karakteristiği ve Gözlem} \\ \midrule
-    \textbf{Ovacık Merkez - Ana Kuşak} & 23 Tem & 6.854 & Geniş alanlı, Hızlı Tepe Yangını (Çok Yüksek dNBR) \\
-    \textbf{Eflani - Araç (Kastamonu) Sınır} & 31 Ağu & 2.736 & Sınır Aşan Yangın Tipi (Yüksek dNBR) \\
-    \textbf{Merkez - Kahyalar (Aladağ)} & 02 Eyl & 500 & Geç Sezon Yangını (Orta-Yüksek dNBR) \\
-    \textbf{Ovacık - Kışla Köyü} & 23 Tem & 300 & Yerleşim Birimi Tehdidi (Yüksek dNBR) \\
-    \textbf{Safranbolu - Toprakcuma} & 31 Ağu & - & Sarp Arazi Yangını (Orta-Yüksek dNBR, Gölgelenme Riski) \\
-    \textbf{Merkez - Çıldıkısık \& Kayı} & 22 Tem & 55 & Geniş Örtü Yangını (Orta dNBR) \\
-    \textbf{Merkez - Soğuksu \& Kayacık} & 05 Ağu & 1.1 & Noktasal Yangın (Düşük-Orta dNBR) \\ \bottomrule
+    \textbf{Yangın Bölgesi} & \textbf{Tarih} & \textbf{Alan (ha)} & \textbf{Notlar ve Kaynaklar} \\ \midrule
+    \textbf{Burunsuz-Çıldıkısık} & 22 Tem & Belirsiz & 18 saatte kontrol, zorlu arazi (Valilik) \\
+    \textbf{Ovacık Büyük Yangın} & 31 Ağu & $\sim$2.736 & Rüzgarla yayılan sınır aşan yangın (BBC) \\
+    \textbf{Gökçedüz Akbıyık} & 14 Eyl & Sınırlı & 3 saatte kontrol, örtü yangını (Sabah) \\
+    \textbf{Toprakcuma} & 31 Ağu & Belirsiz & Yol kenarı yayılımı, helikopter desteği (AA) \\
+    \textbf{Eflani-Araç} & 31 Ağu & $\sim$2.736 & Sınır aşan, 3 Eylül kontrol (AA, BBC) \\
+    \textbf{Aladağ} & 02 Eyl & Belirsiz & 3 köy tahliye, 500+ personel (Valilik) \\
+    \textbf{Soğuksu} & 05 Ağu & 1.1 & Kentsel arayüz riski, hızlı müdahale (Net Haber) \\ \bottomrule
     \end{tabular}
 \end{table}
 
@@ -257,48 +257,47 @@ Böylece, görsel bulgular (haritadaki renk dağılımı), sayısal veriler (eş
 \section{Bölgesel Yangın Analiz Bulguları}
 Bu bölümde, yüksek çözünürlüklü Sentinel-2 görüntüleri üzerinden tespit edilen 7 kritik bölge, yangın dinamiklerinin yerel topoğrafya ve bitki örtüsüyle olan ilişkisi bağlamında incelenmiştir. 
 Yapılan analizler, salt uydu verileriyle sınırlı kalmayıp; Anadolu Ajansı ve BBC Türkçe gibi açık kaynaklardan elde edilen zaman damgalı veriler ve OGM saha raporlarıyla çapraz doğrulamaya tabi tutulmuştur. 
-Aşağıdaki alt başlıklarda, her bir bölge için hesaplanan dNDVI (vejetasyon kaybı) ve dNBR (yanma şiddeti) indeksleri detaylandırılarak sunulmuştur.
+Aşağıdaki alt başlıklarda, her bir bölge için güncellenmiş analiz sonuçları sunulmuştur.
 
-
-\subsection{Merkez - Çıldıkısık \& Kayı Köyleri}
-31 Ağustos 2025 tarihinde Safranbolu - Toprakcuma Bölgesi (Harmancık/Aşağıgüney mevkiileri) merkezli başlayan yangın, zorlu arazi şartlarına rağmen 3 Eylül itibarıyla kontrol altına alınmıştır. Basına ve resmi makamlara yansıyan bilgiler yangının geniş bir alanda etkili olduğunu gösterse de, kesin alan büyüklüğü konusunda net bir veri paylaşılmamıştır. Sentinel-2 verileri, resmi kaynaklarda işaret edilen bölge üzerindeki taze yanık izlerini (high severity burn scars) görselleştirerek hasarın boyutunu ortaya koymaktadır. Bölgenin sarp topoğrafyası müdahaleyi güçleştirmiş olsa da, dNBR analizleri yangının yerleşim yerlerinde kitlesel bir yıkıma yol açmadan durdurulduğunu teyit etmektedir.
-\firefig{figures/yanginlar/1_Cildikisik_Kayi}{Merkez - Çıldıkısık \& Kayı Köyleri Yangın Analizi}
-
-\clearpage
-
-\subsection{Ovacık Merkez - Ana Yangın Kuşağı}
-31 Ağustos 2025'te Eflani Saraycık Köyü İndere mevkiinde başlayan yangın, rüzgârın etkisiyle hızla yayılarak Eflani - Araç (Kastamonu) idari sınırını aşmıştır. Resmi açıklamalara göre yangın, Kastamonu tarafındaki yayılım da dahil edildiğinde, orman ve tarım arazilerinden oluşan yaklaşık 2.736 hektarlık bir alanı etkisi altına almıştır. Uydu analizleri, Eflani kuzeyinden Kastamonu sınırına uzanan geniş bir koridor boyunca vejetasyon indekslerinde (NDVI) sert düşüşler tespit etmiştir. Bu vaka, il sınırlarını aşan yangınlarda bölgesel koordinasyonun önemini vurgulayan somut bir örnek teşkil etmektedir.
-\firefig{figures/yanginlar/2_Buyuk_Ovacik}{Ovacık Merkez - Ana Yangın Kuşağı Yangın Analizi}
+\subsection{Burunsuz-Çıldıkısık Yangını Analizi}
+22 Temmuz 2025 tarihinde Karabük Merkez Burunsuz Köyü (Çıldıkısık mevkii) yakınlarında başlayan yangın, havadan ve karadan yoğun müdahalelerle yaklaşık 18 saat içinde kontrol altına alınmıştır. Karabük Valiliği raporlarına göre 16:32'de başlayan yangın, ertesi gün büyük ölçüde söndürülmüş olup, zorlu arazi şartlarına rağmen yerleşim yerlerinde hasara yol açmamıştır. Sentinel-2 görüntüleri, bölgedeki taze yüksek şiddetli yanık izlerini ortaya koymakta ve dNBR analizleri orta seviyeli vejetasyon kaybını doğrulamaktadır; Anadolu Ajansı kaynakları olayda can kaybı yaşanmadığını belirtmiştir.
+\firefig{figures/yanginlar/1_Cildikisik_Kayi}{Burunsuz-Çıldıkısık Yangını Analizi}
 
 \clearpage
 
-\subsection{Ovacık - Kışla Köyü Yangını}
-23 Temmuz 2025'te (bazı raporlarda 25 Temmuz olarak geçse de ana yangınla eş zamanlı gelişmiştir) Ovacık - Kışla Köyü çevresinde gözlemlenen yangın aktivitesi, bağımsız bir olaydan ziyade Büyük Ovacık/Soğanlıçay yangın kompleksinin bir uzantısı niteliğindedir. Resmi veriler, bu bölgede yaklaşık 300 hektarlık bir alanın etkilendiğini ortaya koymaktadır. Uydu görüntüleri, Kışla Pazaryeri mevkiinden başlayarak yerleşim birimlerini tehdit eden bu yangın kolunun, ana yangın cephesiyle birleşen yoğun duman ve ısı anomalilerini doğrulamaktadır. Bölgedeki yüksek dNBR değerleri, yangının yerleşim sınırlarına kadar ulaştığını ve ciddi risk oluşturduğunu göstermektedir.
-\firefig{figures/yanginlar/3_Kisla}{Ovacık - Kışla Köyü Yangın Analizi}
+\subsection{Ovacık Büyük Yangın Kuşağı Analizi}
+31 Ağustos 2025'te Eflani Saraycık Köyü İndere mevkiinde başlayan bu büyük yangın kuşağı, rüzgarın etkisiyle hızla genişleyerek Kastamonu il sınırına sıçramıştır. BBC Türkçe ve resmi açıklamalara göre 3 Eylül itibarıyla kontrol altına alınan yangın, Kastamonu uzantıları dahil edildiğinde yaklaşık 2.736 hektarlık orman ve tarım arazisini etkilemiştir. Sentinel-2 uydu analizleri, Eflani kuzeyinden sınıra uzanan koridorda sert NDVI düşüşleri göstermekte, dNBR değerleri ise değişken yanma şiddetine işaret etmektedir.
+\firefig{figures/yanginlar/2_Buyuk_Ovacik}{Ovacık Büyük Yangın Kuşağı Analizi}
 
 \clearpage
 
-\subsection{Safranbolu - Toprakcuma Bölgesi}
-31 Ağustos 2025 tarihinde Safranbolu - Toprakcuma Bölgesi (Harmancık/Aşağıgüney mevkiileri) merkezli başlayan yangın, zorlu arazi şartlarına rağmen 3 Eylül itibarıyla kontrol altına alınmıştır. Basına ve resmi makamlara yansıyan bilgiler yangının geniş bir alanda etkili olduğunu gösterse de, kesin alan büyüklüğü konusunda net bir veri paylaşılmamıştır. Sentinel-2 verileri, resmi kaynaklarda işaret edilen bölge üzerindeki taze yanık izlerini (high severity burn scars) görselleştirerek hasarın boyutunu ortaya koymaktadır. Bölgenin sarp topoğrafyası müdahaleyi güçleştirmiş olsa da, dNBR analizleri yangının yerleşim yerlerinde kitlesel bir yıkıma yol açmadan durdurulduğunu teyit etmektedir.
-\firefig{figures/yanginlar/4_Toprakcuma}{Safranbolu - Toprakcuma Bölgesi Yangın Analizi}
+\subsection{Gökçedüz Akbıyık Yangını Analizi}
+14 Eylül 2025'te Ovacık Gökçedüz Köyü Akbıyık mahallesi kırsalında örtü yangını olarak başlayan olay, rüzgarla ormana sıçramasına rağmen ekiplerce üç saat içinde kontrol altına alınmıştır. Sabah ve NTV haberlerine göre, Temmuz ayındaki Ovacık yangınından bağımsız gelişen bu olayda, Sentinel-2 verileri yerleşim yerlerine yakın lokal ısı anomalileri ve dNBR zirveleri tespit etmiş, ancak tahliye gerektiren bir durum oluşmamıştır.
+\firefig{figures/yanginlar/3_Kisla}{Gökçedüz Akbıyık Yangını Analizi}
 
 \clearpage
 
-\subsection{Eflani - Araç (Kastamonu) Sınır Hattı}
-31 Ağustos 2025'te Eflani Saraycık Köyü İndere mevkiinde başlayan yangın, rüzgârın etkisiyle hızla yayılarak Eflani - Araç (Kastamonu) idari sınırını aşmıştır. Resmi açıklamalara göre yangın, Kastamonu tarafındaki yayılım da dahil edildiğinde, orman ve tarım arazilerinden oluşan yaklaşık 2.736 hektarlık bir alanı etkisi altına almıştır. Uydu analizleri, Eflani kuzeyinden Kastamonu sınırına uzanan geniş bir koridor boyunca vejetasyon indekslerinde (NDVI) sert düşüşler tespit etmiştir. Bu vaka, il sınırlarını aşan yangınlarda bölgesel koordinasyonun önemini vurgulayan somut bir örnek teşkil etmektedir.
-\firefig{figures/yanginlar/5_Eflani_Guzelce}{Eflani - Araç (Kastamonu) Sınır Hattı Yangın Analizi}
+\subsection{Toprakcuma Yangını Analizi}
+31 Ağustos 2025'te Safranbolu Toprakcuma (Harmancık ve Aşağıgüney) bölgesinde çıkan yangına arazözler ve helikopterlerle müdahale edilmiştir. Karabük Net Haber ve AA, müdahalenin Eylül başına kadar sürdüğünü belirtirken, Sentinel-2 analizleri sarp arazideki taze yanık izlerini ve yüksek şiddetli dNBR değerlerini doğrulamaktadır. Burunsuz yangınından bağımsız olan bu olay, Karabük-Kastamonu yolu boyunca yayılım göstermiştir.
+\firefig{figures/yanginlar/4_Toprakcuma}{Toprakcuma Yangını Analizi}
 
 \clearpage
 
-\subsection{Merkez - Kahyalar (Aladağ Mevkii)}
-Yangın sezonunun sonlarına doğru, 2 Eylül 2025 tarihinde Merkez - Kahyalar (Aladağ Mevkii) bölgesinde başlayan yangın, havadan müdahale desteği ile kontrol altına alınmıştır. Resmi raporlarda geniş bir alanda etkili olduğu belirtilen bu olay, Sentinel-2 analizlerinde Eylül başı itibarıyla oluşan taze yanık izleri olarak haritalanmıştır. Kahyalar ve Saitler köylerinde tedbir amaçlı tahliyelere neden olan yangın, bölgedeki yangın riskinin Eylül ayına kadar yüksek seyrettiğini gösteren önemli bir veri noktasıdır.
-\firefig{figures/yanginlar/6_Aladag}{Merkez - Kahyalar (Aladağ Mevkii) Yangın Analizi}
+\subsection{Eflani-Araç Yangını Analizi}
+31 Ağustos 2025'te Eflani Saraycık İndere'den başlayıp Kastamonu Araç (Güzelce) sınırına yayılan yangın, 3 Eylül'de kontrol altına alınmıştır. AA ve BBC verilerine göre yaklaşık 2.736 hektarı etkileyen bu sınır aşan yangın, uydu analizlerinde geniş bir koridor boyunca NDVI kaybı olarak izlenmiştir. dNBR haritaları, rüzgarlı koşullarda yoğun yanma bölgelerini, ancak yerleşim yerleri üzerindeki sınırlı etkiyi vurgulamaktadır.
+\firefig{figures/yanginlar/5_Eflani_Guzelce}{Eflani-Araç Yangını Analizi}
 
 \clearpage
 
-\subsection{Merkez - Soğuksu \& Kayacık Mevkii}
-5 Ağustos 2025 tarihinde Merkez - Soğuksu ve Kayacık mevkilerinde meydana gelen yangın, etkilediği alan büyüklüğünden ziyade konumu itibarıyla dikkat çekmektedir. Resmi makamlarca yaklaşık 1.1 hektar (11 dekar) olduğu belirtilen yanmış alan, Soğuksu TOKİ konutlarına ve Kayacık köyüne sınır konumdadır. Uydu görüntüleri, resmi kaynaklarda belirtilen bu lokal yangının izlerini doğrulamaktadır. Alanın küçüklüğüne rağmen yerleşim yerleriyle iç içe olması (Wildland-Urban Interface), bu tür yangınların risk potansiyelini açıkça ortaya koymaktadır.
-\firefig{figures/yanginlar/7_Soguksu_Kayacik}{Merkez - Soğuksu \& Kayacık Mevkii Yangın Analizi}
+\subsection{Aladağ Yangını Analizi}
+2 Eylül 2025'te Merkez Kahyalar Köyü Aladağ mevkiinde başlayan yangın, rüzgarın etkisiyle hızla yayılarak Kahyalar, Saitler ve Kadıköy köylerinin tahliyesine neden olmuştur. Karabük Valiliği, 5 helikopter ve 500'den fazla personel ile müdahale edilen yangının 4 Eylül'de kontrol altına alındığını duyurmuştur. Sentinel-2 haritaları, Eylül başındaki bu taze yanık izlerini ve geç sezonda devam eden yüksek dNBR riskini doğrulamaktadır.
+\firefig{figures/yanginlar/6_Aladag}{Aladağ Yangını Analizi}
+
+\clearpage
+
+\subsection{Soğuksu Yangını Analizi}
+5 Ağustos 2025'te Merkez Soğuksu ve Kayacık (Arıcak/Yenice yolu) bölgesinde çıkan yaklaşık 1.1 hektarlık küçük ölçekli yangın, TOKİ konutlarına yakınlığı nedeniyle risk oluşturmuştur. Karabük Net Haber ve yerel kaynaklar, havadan ve karadan hızlı müdahale ile yangının tahliyeye gerek kalmadan söndürüldüğünü doğrulamaktadır. Uydu görüntüleri lokal izleri ve kentsel arayüzdeki (Wildland-Urban Interface) risk potansiyelini göstermektedir.
+\firefig{figures/yanginlar/7_Soguksu_Kayacik}{Soğuksu Yangını Analizi}
 
 \clearpage
 
